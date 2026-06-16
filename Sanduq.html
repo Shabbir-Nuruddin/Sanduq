@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanduq · Your salary, one number you can't get wrong</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16332A; --ink-soft:#3E574D; --leaf:#1F5C43; --paper:#F7F2E7;
+  --kraft:#E9DCC3; --kraft-deep:#D9C8A6; --card:#FFFFFF; --marigold:#E9A13B;
+  --brick:#BE4B33; --line:#E5DCC9; --good:#2E7D54; --radius:18px;
+  --shadow:0 1px 2px rgba(22,51,42,.06),0 6px 18px rgba(22,51,42,.07);
+  --fd:"Bricolage Grotesque",sans-serif; --fb:"Public Sans",sans-serif; --fm:"Spline Sans Mono",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);color:var(--ink);background:var(--paper);min-height:100vh}
+.money{font-family:var(--fm);font-weight:600;font-variant-numeric:tabular-nums}
+.hidden{display:none !important}
+/* premium */
+.pro-tag{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(135deg,#E9A13B,#D9852A);color:#3D2B07;border-radius:6px;padding:3px 7px;vertical-align:middle;margin-left:6px}
+.demo-banner{background:linear-gradient(135deg,#1F5C43,#16332A);color:#EFE8D4;font-size:12px;line-height:1.45;padding:10px 14px;border-radius:12px;margin-top:14px;display:flex;gap:10px;align-items:center}
+.demo-banner b{color:#fff}
+.demo-banner .pill{background:var(--marigold);color:#3D2B07;font-weight:800;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:50px;white-space:nowrap}
+.lock-row{position:relative}
+.lock-veil{position:absolute;inset:0;background:rgba(247,242,231,.55);backdrop-filter:blur(1.5px);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;z-index:2}
+.lock-veil .key{font-size:15px}
+.plan-grid{display:flex;gap:12px;margin-top:14px}
+.plan{flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:18px 16px}
+.plan.pro{border-color:var(--marigold);background:linear-gradient(160deg,#FFFDF7,#FBF1DC);position:relative}
+.plan.pro::before{content:"Most popular";position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--marigold);color:#3D2B07;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:50px;white-space:nowrap}
+.plan h3{font-family:var(--fd);font-weight:800;font-size:16px}
+.plan .price{font-family:var(--fm);font-weight:700;font-size:26px;margin:6px 0 2px}
+.plan .price small{font-size:12px;color:var(--ink-soft);font-weight:600}
+.plan .per{font-size:11px;color:var(--ink-soft);margin-bottom:12px}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.plan li{font-size:12.5px;line-height:1.4;display:flex;gap:7px;color:var(--ink-soft)}
+.plan li b{color:var(--ink);font-weight:600}
+.plan li .tick{color:var(--good);flex-shrink:0;font-weight:800}
+.plan li .cross{color:#C8BBA0;flex-shrink:0}
+button{font-family:var(--fb);cursor:pointer}
+input,select{font-family:var(--fb);color:var(--ink)}
+
+/* ============ LANDING ============ */
+#landing{min-height:100vh}
+.land-wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+@media(max-width:860px){.land-wrap{padding:0 22px}}
+.land-top{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:21px;letter-spacing:-.02em}
+.logo .lmark{width:34px;height:34px;border-radius:10px;background:var(--ink);color:#F4EEDD;display:flex;align-items:center;justify-content:center;font-size:16px}
+.land-top .tag{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.land-hero{padding:46px 0 30px;display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
+@media(max-width:860px){.land-hero{grid-template-columns:1fr;gap:30px;padding-top:24px}}
+.land-hero>div:first-child{padding-right:12px}
+@media(max-width:860px){.land-hero>div:first-child{padding-right:0}}
+.land-hero h1{font-family:var(--fd);font-weight:800;font-size:clamp(34px,5.2vw,56px);line-height:1.04;letter-spacing:-.03em}
+.land-hero h1 em{font-style:normal;color:var(--leaf);position:relative}
+.land-hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:4px;height:10px;background:rgba(233,161,59,.35);z-index:-1;border-radius:3px}
+.land-hero .lead{font-size:17px;line-height:1.7;color:var(--ink-soft);margin:20px 0 28px;max-width:520px}
+.land-hero .lead b{color:var(--ink)}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.cta{padding:16px 26px;border-radius:14px;border:none;font-family:var(--fd);font-weight:700;font-size:16px}
+.cta.dark{background:var(--ink);color:#F4EEDD;box-shadow:0 10px 26px rgba(22,51,42,.25)}
+.cta.gold{background:var(--marigold);color:#3D2B07}
+.cta.line{background:transparent;border:1.5px solid var(--kraft-deep);color:var(--ink)}
+.cta:active{transform:scale(.98)}
+.cta-note{font-size:12.5px;color:var(--ink-soft);margin-top:12px}
+/* hero mock card */
+.mock{
+  background:var(--ink);color:#F4EEDD;border-radius:26px;padding:26px 24px;position:relative;overflow:hidden;
+  box-shadow:0 30px 70px rgba(16,38,32,.35);max-width:380px;margin:0 auto;width:100%;
+  transform:rotate(1.5deg);
+}
+.mock::after{content:"";position:absolute;right:-50px;top:-50px;width:190px;height:190px;border-radius:50%;
+  border:1.5px solid rgba(244,238,221,.13);
+  box-shadow:inset 0 0 0 16px transparent,inset 0 0 0 17px rgba(244,238,221,.09),inset 0 0 0 34px transparent,inset 0 0 0 35px rgba(244,238,221,.06)}
+.mock .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#CBBE96}
+.mock .big{font-family:var(--fm);font-weight:700;font-size:54px;margin:8px 0 6px}
+.mock .big span{font-size:22px;color:#CBBE96;margin-right:8px}
+.mock p{font-size:13.5px;color:#C9C0A6;line-height:1.55}
+.mock p b{color:#F4EEDD}
+.mock .mrow{display:flex;gap:10px;margin-top:18px}
+.mock .mchip{flex:1;background:rgba(244,238,221,.08);border:1px solid rgba(244,238,221,.15);border-radius:13px;padding:10px 12px}
+.mock .mchip small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#BBB092;margin-bottom:3px}
+.mock .mchip .money{font-size:14px;color:#F4EEDD}
+/* problem strip */
+.strip{background:var(--ink);color:#EFE8D4;padding:54px 0;margin-top:46px}
+.strip .land-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
+@media(max-width:860px){.strip .land-wrap{grid-template-columns:1fr;gap:24px}}
+.strip h3{font-family:var(--fd);font-size:18px;font-weight:700;margin-bottom:8px}
+.strip .stat{font-family:var(--fm);font-weight:700;font-size:34px;color:var(--marigold);display:block;margin-bottom:6px}
+.strip p{font-size:13.5px;line-height:1.6;color:#BFCDBF}
+/* features */
+.feat-sec{padding-top:60px;padding-bottom:20px}
+.feat-sec h2,.how-sec h2{font-family:var(--fd);font-weight:800;font-size:clamp(26px,3.6vw,38px);letter-spacing:-.02em;margin-bottom:8px}
+.feat-sec .sub,.how-sec .sub{color:var(--ink-soft);font-size:15px;max-width:560px;line-height:1.6}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+@media(max-width:860px){.feat-grid{grid-template-columns:1fr}}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 22px;box-shadow:var(--shadow)}
+.feat.hero-feat{grid-column:span 3;background:linear-gradient(135deg,#FBF3E2,#F3E4C4);border-color:var(--kraft-deep);display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+@media(max-width:860px){.feat.hero-feat{grid-column:span 1;grid-template-columns:1fr}}
+.feat .fi{width:46px;height:46px;border-radius:14px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.feat.hero-feat .fi{width:64px;height:64px;font-size:30px;background:var(--marigold);border:none;margin:0}
+.feat h3{font-family:var(--fd);font-size:17px;font-weight:700;margin-bottom:6px}
+.feat p{font-size:13.5px;line-height:1.6;color:var(--ink-soft)}
+.feat .usp-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--ink);color:#F4EEDD;border-radius:6px;padding:4px 9px;margin-bottom:8px}
+/* how it works */
+.how-sec{padding-top:50px;padding-bottom:70px}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:30px}
+@media(max-width:860px){.how-grid{grid-template-columns:1fr;gap:14px}}
+.how{border-top:3px solid var(--marigold);padding-top:18px}
+.how .num{font-family:var(--fm);font-weight:700;font-size:13px;color:var(--marigold);letter-spacing:.04em;display:block;margin-bottom:6px}
+.how b{font-family:var(--fd);font-size:16.5px;display:block;margin-bottom:8px;letter-spacing:-.01em}
+.how p{font-size:13.5px;color:var(--ink-soft);line-height:1.65}
+.land-foot{border-top:1px solid var(--line);padding:26px 0 40px;text-align:center;font-size:12.5px;color:var(--ink-soft)}
+
+/* ============ ONBOARDING ============ */
+#onboard{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.ob-card{width:100%;max-width:430px;background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:0 24px 60px rgba(22,51,42,.15);padding:28px 26px;position:relative}
+.ob-steps{display:flex;gap:6px;margin-bottom:22px}
+.ob-steps i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.ob-steps i.on{background:var(--ink)}
+.ob-card h2{font-family:var(--fd);font-weight:800;font-size:23px;letter-spacing:-.02em;line-height:1.15}
+.ob-card .obsub{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin:8px 0 20px}
+.ob-field{margin-bottom:16px}
+.ob-field label{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px}
+.ob-input{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;font-size:16px;background:var(--paper);outline:none}
+.ob-input:focus{border-color:var(--leaf);background:#fff}
+.ob-money{position:relative}
+.ob-money .cur{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-family:var(--fm);font-weight:600;font-size:14px;color:var(--ink-soft)}
+.ob-money input{padding-left:58px;font-family:var(--fm);font-weight:600}
+.ob-chips{display:flex;flex-wrap:wrap;gap:9px}
+.ob-chip{border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:11px 13px;font-size:13px;font-weight:600;color:var(--ink);text-align:left}
+.ob-chip small{display:block;font-family:var(--fm);font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+.ob-chip.sel{border-color:var(--ink);background:var(--ink);color:#F4EEDD}
+.ob-chip.sel small{color:#CBBE96}
+.ob-grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ob-nav{display:flex;gap:10px;margin-top:24px}
+.ob-btn{flex:1;padding:15px;border:none;border-radius:14px;font-family:var(--fd);font-weight:700;font-size:15px}
+.ob-btn.dark{background:var(--ink);color:#F4EEDD}
+.ob-btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink-soft);flex:0 0 auto;padding:15px 18px}
+.ob-note{font-size:12px;color:var(--ink-soft);line-height:1.5;margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.ob-summary{background:var(--paper);border:1px dashed var(--kraft-deep);border-radius:14px;padding:6px 14px;margin-top:4px}
+.ob-summary .srow{display:flex;justify-content:space-between;padding:9px 0;font-size:13.5px;border-bottom:1px dashed var(--line)}
+.ob-summary .srow:last-child{border-bottom:none}
+.ob-summary .srow span:first-child{color:var(--ink-soft)}
+.ob-summary .srow.big{font-weight:700}
+.ob-summary .srow.big .money{color:var(--leaf);font-size:15px}
+
+/* ============ APP SHELL ============ */
+#appwrap{min-height:100vh;display:flex;justify-content:center;align-items:center;background:#102620;position:fixed;inset:0;z-index:100}
+#appwrap::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 15% 20%,rgba(233,161,59,.05) 0 120px,transparent 121px),radial-gradient(circle at 85% 75%,rgba(255,255,255,.04) 0 160px,transparent 161px)}
+.phone{width:100%;max-width:412px;height:100vh;max-height:880px;background:var(--paper);position:relative;overflow:hidden;display:flex;flex-direction:column}
+@media(min-width:480px){.phone{border-radius:34px;height:92vh;box-shadow:0 30px 80px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08)}}
+.ribbon{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);text-align:center;padding:9px 0 0;display:flex;justify-content:center;gap:8px;align-items:center}
+.ribbon button{background:none;border:none;color:var(--leaf);font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;text-decoration:underline}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding:18px 18px 150px;display:none;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{display:block;animation:rise .28s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.screen.active,.sheet,.toast,.modal-card{animation:none !important;transition:none !important}}
+h1{font-family:var(--fd);font-weight:800;font-size:25px;letter-spacing:-.02em}
+h2{font-family:var(--fd);font-weight:700;font-size:17px;letter-spacing:-.01em;margin-bottom:12px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.sub{font-size:13.5px;color:var(--ink-soft);line-height:1.5}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--leaf);color:#FDF8EC;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:15px;border:none;flex-shrink:0}
+.greet{font-size:13px;color:var(--ink-soft)}
+.greet b{display:block;font-family:var(--fd);font-size:17px;color:var(--ink);font-weight:700}
+.hero{background:var(--ink);color:#F4EEDD;border-radius:24px;padding:24px 22px 20px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero::after{content:"";position:absolute;right:-46px;top:-46px;width:170px;height:170px;border-radius:50%;border:1.5px solid rgba(244,238,221,.14);box-shadow:inset 0 0 0 14px transparent,inset 0 0 0 15px rgba(244,238,221,.10),inset 0 0 0 30px transparent,inset 0 0 0 31px rgba(244,238,221,.07)}
+.hero .eyebrow{color:#CBBE96}
+.hero .big{font-family:var(--fm);font-weight:700;font-size:46px;letter-spacing:-.02em;margin:6px 0 4px}
+.hero .big span{font-size:20px;font-weight:600;color:#CBBE96;margin-right:6px}
+.hero .why{font-size:13px;color:#C9C0A6;line-height:1.5;max-width:290px}
+.hero .why b{color:#F4EEDD;font-weight:600}
+.hero-row{display:flex;gap:10px;margin-top:16px}
+.hero-chip{flex:1;background:rgba(244,238,221,.08);border:1px solid rgba(244,238,221,.14);border-radius:14px;padding:10px 12px}
+.hero-chip small{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#BBB092;margin-bottom:3px}
+.hero-chip .money{font-size:15px;color:#F4EEDD}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-top:14px}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:10px}
+.card-head h2{margin:0}
+.link{font-size:12.5px;font-weight:700;color:var(--leaf);background:none;border:none}
+.bill{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.bill:last-child{border-bottom:none;padding-bottom:0}
+.bicon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--paper);border:1px solid var(--line);flex-shrink:0}
+.bmain{flex:1;min-width:0}
+.bmain b{font-size:14px;font-weight:600;display:block}
+.bmain span{font-size:12px;color:var(--ink-soft)}
+.bamt{text-align:right}
+.bamt .money{font-size:14px}
+.bamt small{display:block;font-size:11px;color:var(--ink-soft)}
+.due-soon small{color:var(--brick);font-weight:700}
+.money.in{color:var(--good)}
+.insight{margin-top:14px;background:linear-gradient(135deg,#FBF3E2,#F6E8CB);border:1px solid var(--kraft-deep);border-radius:var(--radius);padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.insight .dot{width:34px;height:34px;border-radius:50%;background:var(--marigold);color:#3D2B07;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.insight p{font-size:13.5px;line-height:1.5}
+.insight button{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--leaf);background:none;border:none;padding:0}
+.env-row{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none;margin-top:10px}
+.env-row::-webkit-scrollbar{display:none}
+.envelope{min-width:150px;background:var(--kraft);border-radius:14px;position:relative;padding:46px 14px 14px;border:1px solid var(--kraft-deep);cursor:pointer;transition:transform .15s ease}
+.envelope:active{transform:scale(.97)}
+.envelope .flap{position:absolute;inset:0 0 auto 0;height:42px;background:var(--kraft-deep);clip-path:polygon(0 0,100% 0,100% 30%,50% 100%,0 30%);border-radius:14px 14px 0 0}
+.envelope .seal{position:absolute;top:26px;left:50%;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:var(--leaf);color:#F4EEDD;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:2;box-shadow:0 2px 5px rgba(22,51,42,.25)}
+.envelope b{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+.envelope .money{font-size:15px}
+.envelope small{display:block;font-size:11px;color:var(--ink-soft);margin-top:2px}
+.envelope .bar{height:5px;background:rgba(255,255,255,.6);border-radius:3px;margin-top:8px;overflow:hidden}
+.envelope .bar i{display:block;height:100%;background:var(--leaf);border-radius:3px}
+.envelope.gold .seal{background:var(--marigold);color:#3D2B07}
+.envelope.gold .bar i{background:var(--marigold)}
+.cat{margin-bottom:14px}
+.cat:last-child{margin-bottom:0}
+.cat-top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px}
+.cat-top b{font-weight:600}
+.cat-top .money{font-size:13px;color:var(--ink-soft)}
+.track{height:8px;background:var(--paper);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:5px;background:var(--leaf)}
+.track i.warn{background:var(--marigold)}
+.track i.over{background:var(--brick)}
+.cat .note{font-size:11.5px;color:var(--ink-soft);margin-top:4px}
+.cat .note.alert{color:var(--brick);font-weight:600}
+.subflag{font-size:10.5px;font-weight:700;letter-spacing:.04em;background:#F8E3DC;color:var(--brick);border-radius:6px;padding:2px 7px;display:inline-block;margin-top:3px}
+.ghostbtn{font-size:12px;font-weight:700;color:var(--brick);border:1.5px solid #E5BFB4;background:#FDF7F5;padding:7px 12px;border-radius:10px}
+.btn{width:100%;padding:15px;border:none;border-radius:14px;background:var(--ink);color:#F4EEDD;font-family:var(--fd);font-weight:700;font-size:15px;margin-top:14px}
+.btn:active{transform:scale(.98)}
+.btn.gold{background:var(--marigold);color:#3D2B07}
+.btn.quiet{background:transparent;color:var(--leaf);border:1.5px solid var(--leaf)}
+.people{display:flex;gap:14px;overflow-x:auto;padding:4px 2px;scrollbar-width:none}
+.people::-webkit-scrollbar{display:none}
+.person{text-align:center;min-width:64px;border:none;background:none}
+.person .pa{width:54px;height:54px;border-radius:50%;background:var(--kraft);border:1.5px solid var(--kraft-deep);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 6px;transition:transform .12s}
+.person:active .pa{transform:scale(.93)}
+.person span{font-size:11.5px;font-weight:600;display:block;color:var(--ink)}
+.person small{font-size:10px;color:var(--ink-soft)}
+.person.sel .pa{background:var(--ink);border-color:var(--ink)}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.qa{padding:13px 0;border:1.5px solid var(--line);background:var(--card);border-radius:12px;font-family:var(--fm);font-weight:600;font-size:15px;color:var(--ink)}
+.qa.sel{border-color:var(--ink);background:var(--ink);color:#F4EEDD}
+.amt-input{display:flex;align-items:center;gap:8px;margin-top:10px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:4px 14px}
+.amt-input:focus-within{border-color:var(--leaf)}
+.amt-input span{font-family:var(--fm);font-weight:600;font-size:14px;color:var(--ink-soft)}
+.amt-input input{flex:1;border:none;background:none;outline:none;font-family:var(--fm);font-weight:600;font-size:17px;padding:10px 0}
+.receipt{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:4px 16px;margin-top:14px}
+.rrow{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px dashed var(--line);font-size:13.5px;gap:12px}
+.rrow:last-child{border-bottom:none}
+.rrow span:first-child{color:var(--ink-soft)}
+.rrow .money{font-size:13.5px}
+.plain{background:#EDF3EE;border:1px solid #CFE0D2;border-radius:14px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.55;color:#214233}
+.plain.warn{background:#FBF0E2;border-color:#E6C896;color:#5C3D10}
+.plain b{font-weight:700}
+.success-seal{width:74px;height:74px;border-radius:50%;background:var(--leaf);color:#F4EEDD;font-size:30px;display:flex;align-items:center;justify-content:center;margin:26px auto 14px;box-shadow:0 0 0 10px rgba(31,92,67,.12)}
+.center{text-align:center}
+.steps{display:flex;gap:6px;margin:4px 0 16px}
+.steps i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.steps i.on{background:var(--ink)}
+.lesson{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--line);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;font-family:var(--fb)}
+.lesson:last-child{border-bottom:none}
+.lesson .li{width:42px;height:42px;border-radius:13px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.lesson b{font-size:14px;font-weight:600;display:block;color:var(--ink)}
+.lesson span{font-size:12px;color:var(--ink-soft)}
+.lesson .done{margin-left:auto;color:var(--good);font-size:16px}
+.course-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.course-head h2{margin:0}
+.course-head .cprog{font-size:11.5px;font-weight:700;color:var(--ink-soft)}
+.quiz-opt{display:block;width:100%;text-align:left;padding:13px 14px;margin-top:9px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-size:13.5px;color:var(--ink);transition:all .12s}
+.quiz-opt.right{border-color:var(--good);background:#EDF6EF;font-weight:600}
+.quiz-opt.wrong{border-color:var(--brick);background:#FBF0ED}
+.jam{margin-top:14px;border-radius:var(--radius);padding:18px 16px;color:#F4EEDD;background:linear-gradient(140deg,#1F5C43,#16332A);position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.jam::after{content:"";position:absolute;left:-30px;bottom:-50px;width:140px;height:140px;border-radius:50%;border:1.5px solid rgba(244,238,221,.15)}
+.jam .eyebrow{color:#A8C7B4}
+.jam h3{font-family:var(--fd);font-size:17px;font-weight:700;margin:4px 0 6px}
+.jam p{font-size:13px;color:#C9DCCE;line-height:1.55}
+.jam p b{color:#fff}
+.jam .members{display:flex;margin-top:12px}
+.jam .members i{width:30px;height:30px;border-radius:50%;background:var(--kraft);color:var(--ink);font-style:normal;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #1F5C43;margin-left:-8px}
+.jam .members i:first-child{margin-left:0}
+.jam .members i.you{background:var(--marigold)}
+.jam .whylink{background:none;border:none;color:#A8C7B4;font-size:12px;font-weight:700;text-decoration:underline;padding:0;margin-top:8px}
+nav.appnav{position:absolute;bottom:0;left:0;right:0;background:rgba(250,246,238,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;padding:8px 6px calc(10px + env(safe-area-inset-bottom));z-index:30}
+nav.appnav button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--ink-soft)}
+nav.appnav button .nico{font-size:19px;line-height:1;filter:grayscale(1);opacity:.55}
+nav.appnav button span{font-size:10.5px;font-weight:700;letter-spacing:.02em}
+nav.appnav button.active{color:var(--ink)}
+nav.appnav button.active .nico{filter:none;opacity:1}
+.ask-fab{position:absolute;right:16px;bottom:86px;z-index:31;background:var(--marigold);color:#3D2B07;border:none;border-radius:50px;padding:13px 18px;font-family:var(--fd);font-weight:800;font-size:14px;box-shadow:0 8px 20px rgba(233,161,59,.45);display:flex;align-items:center;gap:7px}
+.ask-fab:active{transform:scale(.96)}
+.scrim{position:absolute;inset:0;background:rgba(16,38,32,.45);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:41;background:var(--paper);border-radius:24px 24px 0 0;max-height:80%;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.sheet.show{transform:none}
+.sheet-head{padding:14px 18px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;position:relative}
+.sheet-head .grab{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:40px;height:4px;border-radius:2px;background:var(--kraft-deep)}
+.sheet-head b{font-family:var(--fd);font-size:16px;display:block}
+.sheet-head span{font-size:11.5px;color:var(--ink-soft);display:block}
+.sheet-head .close{margin-left:auto;background:var(--kraft);border:none;width:30px;height:30px;border-radius:50%;font-size:13px;color:var(--ink)}
+.chat{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:86%;padding:11px 14px;border-radius:16px;font-size:13.5px;line-height:1.55}
+.msg.bot{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:6px;align-self:flex-start}
+.msg.me{background:var(--ink);color:#F4EEDD;border-bottom-right-radius:6px;align-self:flex-end}
+.msg .act{display:inline-block;margin-top:9px;font-size:12.5px;font-weight:700;color:#fff;background:var(--leaf);border:none;border-radius:9px;padding:8px 12px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;border:1.5px solid var(--kraft-deep);background:var(--card);border-radius:50px;padding:9px 14px;font-size:12.5px;font-weight:600;color:var(--ink)}
+.composer{display:flex;gap:8px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.composer input{flex:1;border:1.5px solid var(--line);border-radius:50px;padding:12px 16px;font-size:14px;background:var(--card);outline:none}
+.composer input:focus{border-color:var(--leaf)}
+.composer button{width:46px;height:46px;border-radius:50%;border:none;background:var(--ink);color:#F4EEDD;font-size:17px;flex-shrink:0}
+.toast{position:absolute;left:50%;bottom:160px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#F4EEDD;font-size:13px;font-weight:600;padding:11px 18px;border-radius:50px;z-index:60;opacity:0;pointer-events:none;transition:all .3s;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:90%;text-overflow:ellipsis;overflow:hidden}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* modal */
+.modal{position:absolute;inset:0;z-index:50;display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.modal .mscrim{position:absolute;inset:0;background:rgba(16,38,32,.5)}
+.modal-card{position:relative;width:100%;background:var(--paper);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:84%;overflow-y:auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.modal-card h3{font-family:var(--fd);font-weight:800;font-size:19px;margin-bottom:6px}
+.modal-card .sub{margin-bottom:14px}
+.emoji-pick{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.emoji-pick button{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-size:20px}
+.emoji-pick button.sel{border-color:var(--ink);background:var(--kraft)}
+</style>
+</head>
+<body>
+<!-- ==================== LANDING ==================== -->
+<div id="landing">
+  <div class="land-wrap">
+    <div class="land-top">
+      <div class="logo"><span class="lmark">✉️</span> Sanduq</div>
+      <span class="tag">Money in plain language</span>
+    </div>
+    <div class="land-hero">
+      <div>
+        <h1>Your salary becomes <em>one number</em> you can't get wrong.</h1>
+        <p class="lead">Banking apps show you balances, charts and jargon. Sanduq quarantines your rent, bills and savings the moment salary lands, then tells you the only thing you actually need to know: <b>what is safe to spend today.</b> Built for people who never got a finance lesson and never needed one until now.</p>
+        <div class="cta-row">
+          <button class="cta dark" onclick="startOnboard()">Set it up with my numbers</button>
+          <button class="cta line" onclick="startDemo()">Watch the demo persona</button>
+        </div>
+        <p class="cta-note">Takes 60 seconds. Nothing leaves your device. No bank login needed for the prototype.</p>
+      </div>
+      <div class="mock">
+        <span class="eyebrow">Safe to spend today</span>
+        <div class="big"><span>AED</span>86</div>
+        <p>Rent, bills and <b>AED 600 of savings</b> are already locked away. This is what's truly yours.</p>
+        <div class="mrow">
+          <div class="mchip"><small>In account</small><div class="money">AED 4,210</div></div>
+          <div class="mchip"><small>Quarantined</small><div class="money">AED 3,425</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="land-wrap">
+      <div><span class="stat">88%</span><h3>of UAE residents send money home</h3><p>Yet most pay hidden exchange margins because apps show fees, not the real total cost. Sanduq shows what the family actually receives, before anything moves.</p></div>
+      <div><span class="stat">AED 297</span><h3>average monthly subscription leak</h3><p>Money quietly walks out through gym memberships and apps people forgot. Sanduq names every recurring charge and flags the ones you stopped using.</p></div>
+      <div><span class="stat">0</span><h3>finance words you'll need to Google</h3><p>Every screen explains itself in the plain language of a friend, not a banker. If a sentence needs a dictionary, we rewrite the sentence.</p></div>
+    </div>
+  </div>
+
+  <div class="land-wrap feat-sec">
+    <h2>Why Sanduq wins</h2>
+    <p class="sub">Six tools, one idea: money you already understand, finally in an app.</p>
+    <div class="feat-grid">
+      <div class="feat hero-feat">
+        <div class="fi">🎯</div>
+        <div>
+          <span class="usp-tag">The one thing nobody else does</span>
+          <h3>Safe to spend today</h3>
+          <p>Other apps show your balance and let you do the maths. Sanduq does the maths. The moment salary lands, rent, bills and savings are set aside automatically. One honest number tells you what you can spend today without breaking anything. A balance is information. This is a verdict.</p>
+        </div>
+      </div>
+      <div class="feat"><div class="fi">✉️</div><h3>Envelopes, digitized</h3><p>The cash envelope system your parents used, rebuilt in software. Money in an envelope cannot be spent by accident. Eid, emergencies, family support: each gets its own.</p></div>
+      <div class="feat"><div class="fi">🤝</div><h3>Jam'iya money circles</h3><p>The committee system trusted for generations, now with receipts, reminders and a payout schedule nobody can argue about. Interest free lump sums, powered by your own people.</p></div>
+      <div class="feat"><div class="fi">💬</div><h3>An assistant that says no</h3><p>Ask "can I afford a new phone?" and get a straight answer using your real numbers, plus the plan to afford it properly. No jargon, no lectures, no upsell.</p></div>
+      <div class="feat"><div class="fi">↗️</div><h3>Transfers with the full price tag</h3><p>Fee, exchange rate and exactly what your family receives, shown before you confirm. Eight corridors from the UAE, compared against typical exchange house costs.</p></div>
+      <div class="feat"><div class="fi">🔍</div><h3>Leak detection</h3><p>Subscriptions you forgot, delivery habits past 9pm, budgets about to break. Sanduq spots the leaks and tells you in dirhams what plugging each one is worth.</p></div>
+      <div class="feat"><div class="fi">🎓</div><h3>Two minute money school</h3><p>Eleven short lessons across three courses: how banks really charge you, where money leaks, and how to send it home without losing it. A quiz after every one.</p></div>
+    </div>
+  </div>
+
+  <div class="land-wrap how-sec">
+    <h2>How it works</h2>
+    <div class="how-grid">
+      <div class="how"><span class="num">Step 1</span><b>Tell it three things</b><p>Your salary, your rent, your bills. Sixty seconds, no bank login, nothing leaves your phone in this prototype.</p></div>
+      <div class="how"><span class="num">Step 2</span><b>Salary gets sorted on arrival</b><p>Payday triggers the split: rent quarantined, bills reserved, savings tucked into envelopes. You never see money that was never really spendable.</p></div>
+      <div class="how"><span class="num">Step 3</span><b>Live by one number</b><p>"Safe to spend today" updates as you spend. Green means go. When it says no, the assistant shows you why and what to change.</p></div>
+    </div>
+    <div class="cta-row" style="margin-top:34px">
+      <button class="cta gold" onclick="startOnboard()">Try it with my numbers</button>
+      <button class="cta line" onclick="startDemo()">Skip setup, use sample data</button>
+    </div>
+  </div>
+  <div class="land-foot">Sanduq · prototype build · sample transactions shown until a bank connection exists · rates indicative</div>
+</div>
+
+<!-- ==================== ONBOARDING ==================== -->
+<div id="onboard" class="hidden">
+  <div class="ob-card">
+    <div class="ob-steps"><i class="on"></i><i id="obs2"></i><i id="obs3"></i><i id="obs4"></i><i id="obs5"></i></div>
+
+    <div class="ob-step" id="ob1">
+      <h2>First, who are you?</h2>
+      <p class="obsub">And where you work, so taxes and take-home are right. This stays on your device.</p>
+      <div class="ob-field"><label>Your first name</label><input class="ob-input" id="ob-name" placeholder="e.g. Rashid" maxlength="20"></div>
+      <div class="ob-field"><label>Where do you earn?</label><div class="ob-chips ob-grid2" id="ob-countries"></div></div>
+      <div class="ob-field"><label>Gross salary, before tax (<span id="ob-incomeperiod">per month</span>)</label><div class="ob-money"><span class="cur" id="ob-incomecur">AED</span><input class="ob-input" id="ob-income" type="number" inputmode="numeric" placeholder="6500"></div></div>
+      <div class="ob-field"><label>Which day does pay arrive?</label><div class="ob-money"><span class="cur">Day</span><input class="ob-input" id="ob-payday" type="number" inputmode="numeric" placeholder="1" min="1" max="28"></div></div>
+      <p class="ob-note" id="ob-taxpreview">Pick a country to see your estimated take-home.</p>
+      <div class="ob-nav"><button class="ob-btn ghost" onclick="exitOnboard()">Back</button><button class="ob-btn dark" onclick="obGo(2)">Next</button></div>
+    </div>
+
+    <div class="ob-step hidden" id="ob2">
+      <h2>The big fixed cost</h2>
+      <p class="obsub">Rent or home payment. Sanduq quarantines this first, every payday, so it can never be spent by mistake.</p>
+      <div class="ob-field"><label>Monthly rent / housing</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="ob-rent" type="number" inputmode="numeric" placeholder="2400"></div></div>
+      <div class="ob-field"><label>Due on which day?</label><div class="ob-money"><span class="cur">Day</span><input class="ob-input" id="ob-rentday" type="number" inputmode="numeric" placeholder="21" min="1" max="28"></div></div>
+      <p class="ob-note">Live with family or no rent? Put 0 and skip ahead.</p>
+      <div class="ob-nav"><button class="ob-btn ghost" onclick="obGo(1)">Back</button><button class="ob-btn dark" onclick="obGo(3)">Next</button></div>
+    </div>
+
+    <div class="ob-step hidden" id="ob3">
+      <h2>Bills that come every month</h2>
+      <p class="obsub">Tap the ones you pay. Amounts are typical, you can change them later in Settings.</p>
+      <div class="ob-chips" id="ob-bills"></div>
+      <div class="ob-field" style="margin-top:14px"><label>Anything else, monthly total (optional)</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="ob-otherbills" type="number" inputmode="numeric" placeholder="0"></div></div>
+      <div class="ob-nav"><button class="ob-btn ghost" onclick="obGo(2)">Back</button><button class="ob-btn dark" onclick="obGo(4)">Next</button></div>
+    </div>
+
+    <div class="ob-step hidden" id="ob4">
+      <h2>Where does family live?</h2>
+      <p class="obsub">So transfers show real corridors, currencies and what your family actually receives.</p>
+      <div class="ob-chips ob-grid2" id="ob-corridors"></div>
+      <div class="ob-field" style="margin-top:14px"><label>Sent home monthly, roughly (0 if none)</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="ob-remit" type="number" inputmode="numeric" placeholder="600"></div></div>
+      <div class="ob-nav"><button class="ob-btn ghost" onclick="obGo(3)">Back</button><button class="ob-btn dark" onclick="obGo(5)">Next</button></div>
+    </div>
+
+    <div class="ob-step hidden" id="ob5">
+      <h2>One thing you're saving for</h2>
+      <p class="obsub">Your first envelope. You can add more anytime.</p>
+      <div class="ob-chips" id="ob-goals"></div>
+      <div class="ob-field" style="margin-top:14px"><label>Set aside monthly</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="ob-savemonthly" type="number" inputmode="numeric" placeholder="300"></div></div>
+      <div class="ob-summary" id="ob-summary"></div>
+      <div class="ob-nav"><button class="ob-btn ghost" onclick="obGo(4)">Back</button><button class="ob-btn dark" onclick="finishOnboard()">Open my Sanduq</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP ==================== -->
+<div id="appwrap" class="hidden">
+<div class="phone">
+  <div class="ribbon"><span id="modeflag">Prototype</span>·<button onclick="openSettings()">Settings</button>·<button onclick="backToLanding()">Exit app</button></div>
+  <div class="screens">
+
+    <!-- HOME -->
+    <section class="screen active" id="scr-home">
+      <div class="top">
+        <div class="greet"><span id="h-greet">Good evening</span><b id="h-name">·</b></div>
+        <button class="avatar" id="h-avatar" onclick="openSettings()">·</button>
+      </div>
+      <div class="hero">
+        <span class="eyebrow">Safe to spend today</span>
+        <div class="big"><span>AED</span><span id="h-safe">0</span></div>
+        <p class="why" id="h-why"></p>
+        <div class="hero-row">
+          <div class="hero-chip"><small>In your account</small><div class="money" id="h-bal">·</div></div>
+          <div class="hero-chip"><small>Set aside</small><div class="money" id="h-aside">·</div></div>
+        </div>
+      </div>
+      <div class="demo-banner" id="h-prem-banner" onclick="showPlans()">
+        <span class="pill">Demo</span>
+        <span>Everything is <b>unlocked</b> for you to try. Tap to see what's free and what's Premium →</span>
+      </div>
+      <div class="insight" id="h-insight"></div>
+      <div class="card">
+        <div class="card-head"><h2>Coming up</h2><button class="link" onclick="go('pay')">Pay now</button></div>
+        <div id="h-bills"></div>
+      </div>
+      <h2 style="margin:20px 0 0">Your envelopes</h2>
+      <p class="sub" style="margin-top:2px">Money you set aside on purpose. It cannot be spent by accident.</p>
+      <div class="env-row" id="h-envs"></div>
+      <div class="card">
+        <div class="card-head"><h2>Recent activity</h2><button class="link" onclick="go('money')">See all</button></div>
+        <div id="h-txns"></div>
+        <p class="sub" style="margin-top:10px;font-size:11.5px" id="h-simnote"></p>
+      </div>
+    </section>
+
+    <!-- MONEY -->
+    <section class="screen" id="scr-money">
+      <div class="top"><div><h1>Where it went</h1><p class="sub" id="m-sub"></p></div></div>
+      <div class="card" id="m-tax-card"></div>
+      <div class="card">
+        <div class="card-head"><h2>Spending this month</h2><span class="money" style="font-size:14px" id="m-total"></span></div>
+        <div id="m-cats"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Things charging you monthly</h2><span class="money" style="font-size:14px" id="m-subs-total"></span></div>
+        <div id="m-subs"></div>
+      </div>
+      <div class="plain" id="m-plain"></div>
+    </section>
+
+    <!-- PAY -->
+    <section class="screen" id="scr-pay">
+      <div id="pay1">
+        <div class="top"><div><h1>Send money</h1><p class="sub">No surprise fees. You see the full cost before anything moves.</p></div></div>
+        <div class="steps"><i class="on"></i><i></i><i></i></div>
+        <h2>Who is it for?</h2>
+        <div class="people" id="p-people"></div>
+        <h2 style="margin-top:20px">How much?</h2>
+        <div class="quick" id="p-quick"></div>
+        <div class="amt-input"><span>AED</span><input id="p-custom" type="number" inputmode="numeric" placeholder="Or type any amount" oninput="customAmt(this.value)"></div>
+        <div class="plain" id="p-afford"></div>
+        <button class="btn" onclick="payStep(2)">Check the cost first</button>
+      </div>
+      <div id="pay2" class="hidden">
+        <div class="top"><div><h1>Check before you send</h1><p class="sub">Nothing has moved yet. Read this, then decide.</p></div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="receipt" id="p-receipt"></div>
+        <div class="plain" id="p-plain2"></div>
+        <button class="btn" onclick="payStep(3)">Yes, send it</button>
+        <button class="btn quiet" onclick="payStep(1)">Go back, change something</button>
+      </div>
+      <div id="pay3" class="hidden center">
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div class="success-seal">✓</div>
+        <h1 id="p-done-title">Sent</h1>
+        <p class="sub" style="margin-top:6px" id="p-done-sub"></p>
+        <div class="receipt" style="text-align:left" id="p-done-receipt"></div>
+        <div class="plain" id="p-done-plain"></div>
+        <button class="btn quiet" onclick="payStep(1)">Done</button>
+      </div>
+    </section>
+
+    <!-- SAVE -->
+    <section class="screen" id="scr-save">
+      <div class="top"><div><h1>Set aside</h1><p class="sub">The cash envelopes you grew up with, made digital.</p></div></div>
+      <div id="s-envs"></div>
+      <div class="jam" id="s-jam"></div>
+      <button class="btn quiet" onclick="openEnvModal()">＋ Start a new envelope</button>
+    </section>
+
+    <!-- LEARN -->
+    <section class="screen" id="scr-learn">
+      <div class="top"><div><h1>Understand it</h1><p class="sub">Two minutes at a time. No jargon, ever.</p></div><span style="font-size:12px;font-weight:700;color:var(--marigold);white-space:nowrap" id="l-streak">🔥 0 done</span></div>
+      <div id="l-courses"></div>
+      <div class="insight"><div class="dot">🎓</div><div><p><b>Why bother:</b> every lesson here exists because it saves real dirhams. Finish all three courses and you will know exactly where your money leaks and how banks price things, which is more than most people ever get taught.</p></div></div>
+    </section>
+  </div>
+
+  <button class="ask-fab" onclick="openAsk()">💬 Ask</button>
+
+  <nav class="appnav">
+    <button class="active" data-s="home" onclick="go('home')"><span class="nico">🏠</span><span>Home</span></button>
+    <button data-s="money" onclick="go('money')"><span class="nico">📊</span><span>Money</span></button>
+    <button data-s="pay" onclick="go('pay')"><span class="nico">↗️</span><span>Pay</span></button>
+    <button data-s="save" onclick="go('save')"><span class="nico">✉️</span><span>Save</span></button>
+    <button data-s="learn" onclick="go('learn')"><span class="nico">🎓</span><span>Learn</span></button>
+  </nav>
+
+  <div class="scrim" id="scrim" onclick="closeAsk()"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-head">
+      <div class="grab"></div>
+      <div class="avatar" style="background:var(--marigold);color:#3D2B07">س</div>
+      <div><b>Ask Sanduq</b><span>Plain answers using your own numbers</span></div>
+      <button class="close" onclick="closeAsk()">✕</button>
+    </div>
+    <div class="chat" id="chat"></div>
+    <div class="chips" id="chips">
+      <button class="chip" onclick="askChip('Can I afford a new phone?')">Can I afford a new phone?</button>
+      <button class="chip" onclick="askChip('Why is my safe to spend so low?')">Why is my number low?</button>
+      <button class="chip" onclick="askChip('How do I save faster?')">Save faster</button>
+      <button class="chip" onclick="askChip('Should I get a credit card?')">Should I get a credit card?</button>
+      <button class="chip" onclick="askChip('What is a jamiya?')">What is a jam'iya?</button>
+    </div>
+    <div class="composer">
+      <input id="askinput" type="text" placeholder="Ask in your own words..." onkeydown="if(event.key==='Enter')sendAsk()">
+      <button onclick="sendAsk()">↑</button>
+    </div>
+  </div>
+
+  <!-- generic modal -->
+  <div class="modal" id="modal">
+    <div class="mscrim" onclick="closeModal()"></div>
+    <div class="modal-card" id="modal-card"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+</div>
+<script>
+/* ================= COUNTRIES & TAX ENGINE ================= */
+/* Tax verified June 2026: India FY25-26 new regime + 87A rebate to 12L (confirmed),
+   UK 25/26 PA 12,570 / 20-40-45 + employee NI 8% (confirmed). PH & PK indicative. */
+const COUNTRIES=[
+ {id:'ae',name:'UAE (Dubai)',flag:'🇦🇪',cur:'AED',sym:'AED',period:'month',
+  note:'No personal income tax. This is the Dubai advantage: your gross is your take-home.',
+  vat:5, brackets:[{upTo:Infinity,rate:0}], rebate:0, deduction:0, ni:0},
+ {id:'in',name:'India',flag:'🇮🇳',cur:'INR',sym:'₹',period:'year',
+  note:'New regime FY 2025-26. Rebate under 87A makes income up to ₹12L effectively tax-free.',
+  vat:18, deduction:75000, rebateUpTo:1200000,
+  brackets:[{upTo:400000,rate:0},{upTo:800000,rate:.05},{upTo:1200000,rate:.10},{upTo:1600000,rate:.15},{upTo:2000000,rate:.20},{upTo:2400000,rate:.25},{upTo:Infinity,rate:.30}], ni:0},
+ {id:'uk',name:'United Kingdom',flag:'🇬🇧',cur:'GBP',sym:'£',period:'year',
+  note:'2025/26. Personal allowance £12,570, then 20/40/45%. Employee National Insurance 8%.',
+  vat:20, deduction:0, rebateUpTo:0, niThreshold:12570, ni:.08,
+  brackets:[{upTo:12570,rate:0},{upTo:50270,rate:.20},{upTo:125140,rate:.40},{upTo:Infinity,rate:.45}]},
+ {id:'ph',name:'Philippines',flag:'🇵🇭',cur:'PHP',sym:'₱',period:'year',
+  note:'TRAIN law brackets (indicative). Income up to ₱250k is tax-free.',
+  vat:12, deduction:0, rebateUpTo:0, ni:0,
+  brackets:[{upTo:250000,rate:0},{upTo:400000,rate:.15},{upTo:800000,rate:.20},{upTo:2000000,rate:.25},{upTo:8000000,rate:.30},{upTo:Infinity,rate:.35}]},
+ {id:'pk',name:'Pakistan',flag:'🇵🇰',cur:'PKR',sym:'Rs',period:'year',
+  note:'Salaried slabs (indicative). Income up to Rs 600k is tax-free.',
+  vat:18, deduction:0, rebateUpTo:0, ni:0,
+  brackets:[{upTo:600000,rate:0},{upTo:1200000,rate:.05},{upTo:2200000,rate:.15},{upTo:3200000,rate:.25},{upTo:4100000,rate:.30},{upTo:Infinity,rate:.35}]},
+];
+function calcTax(annualGross,country){
+  let taxable=Math.max(0,annualGross-(country.deduction||0));
+  let tax=0,last=0;
+  for(const b of country.brackets){const span=Math.min(taxable,b.upTo)-last;if(span>0)tax+=span*b.rate;last=b.upTo;if(taxable<=b.upTo)break;}
+  if(country.rebateUpTo&&taxable<=country.rebateUpTo)tax=0; /* 87A-style full rebate */
+  let ni=0;
+  if(country.ni&&country.niThreshold)ni=Math.max(0,annualGross-country.niThreshold)*country.ni;
+  return {tax:Math.round(tax),ni:Math.round(ni),total:Math.round(tax+ni),net:Math.round(annualGross-tax-ni)};
+}
+
+
+const CORRIDORS=[
+  {id:'pk',name:'Pakistan',flag:'🇵🇰',cur:'PKR',rate:76.9,wallet:'JazzCash'},
+  {id:'in',name:'India',flag:'🇮🇳',cur:'INR',rate:23.5,wallet:'UPI'},
+  {id:'ph',name:'Philippines',flag:'🇵🇭',cur:'PHP',rate:15.8,wallet:'GCash'},
+  {id:'bd',name:'Bangladesh',flag:'🇧🇩',cur:'BDT',rate:33.4,wallet:'bKash'},
+  {id:'eg',name:'Egypt',flag:'🇪🇬',cur:'EGP',rate:13.0,wallet:'Vodafone Cash'},
+  {id:'np',name:'Nepal',flag:'🇳🇵',cur:'NPR',rate:37.6,wallet:'eSewa'},
+  {id:'lk',name:'Sri Lanka',flag:'🇱🇰',cur:'LKR',rate:81.5,wallet:'bank account'},
+  {id:'ae',name:'UAE only',flag:'🇦🇪',cur:'AED',rate:1,wallet:'bank account'}
+];
+const BILL_PRESETS=[
+  {id:'phone',icon:'📱',name:'Phone (Etisalat/du)',amount:125},
+  {id:'utilities',icon:'💡',name:'Electricity & water',amount:240},
+  {id:'internet',icon:'🌐',name:'Home internet',amount:315},
+  {id:'transport',icon:'🚇',name:'Transport pass',amount:300},
+  {id:'carloan',icon:'🚗',name:'Car payment',amount:900},
+  {id:'school',icon:'🎒',name:'School fees',amount:1200},
+];
+const GOAL_PRESETS=[
+  {id:'eid',icon:'🌙',name:'Eid gifts',target:2000},
+  {id:'emergency',icon:'🛟',name:'Emergency fund',target:5000},
+  {id:'wedding',icon:'💍',name:'Wedding',target:20000},
+  {id:'phone',icon:'📱',name:'New phone',target:2400},
+  {id:'visa',icon:'🛂',name:'Visa & documents',target:3500},
+  {id:'home',icon:'🏠',name:'Family back home',target:10000},
+];
+const SUBS=[
+  {icon:'🎬',name:'Netflix',note:'Renews on the 21st',amount:39,unused:false},
+  {icon:'🏋️',name:'GymNation membership',note:'',amount:199,unused:true},
+  {icon:'🎧',name:'Anghami Plus',note:'Renews on the 28th',amount:19.99,unused:false},
+  {icon:'☁️',name:'iCloud 200GB',note:'Renews on the 3rd',amount:10.99,unused:false},
+];
+/* spend categories as share of income, used to simulate realistic spending */
+const CAT_DEFS=[
+  {icon:'🛒',name:'Groceries',share:.115,budgetShare:.135},
+  {icon:'🍔',name:'Food delivery',share:.052,budgetShare:.04},
+  {icon:'🚌',name:'Transport',share:.037,budgetShare:.055},
+  {icon:'📦',name:'Shopping',share:.072,budgetShare:.078},
+];
+
+let S=null; /* app state, in memory for this prototype */
+let subsCancelled=[];
+
+const DEMO={
+  demo:true,name:'Salma',country:'ae',grossYear:78000,income:6500,payday:1,rent:2400,rentDay:21,
+  premium:true,
+  bills:[{...BILL_PRESETS[0]},{...BILL_PRESETS[1]},{...BILL_PRESETS[2]}],otherBills:0,
+  corridor:CORRIDORS[0],remit:600,saveMonthly:300,
+  envelopes:[
+    {icon:'🌙',name:'Eid gifts',amount:1150,target:2000,gold:true},
+    {icon:'🛟',name:'Emergency',amount:1675,target:5000},
+  ],
+  people:[
+    {name:'Ammi',emoji:'👩🏽',corridor:CORRIDORS[0]},
+    {name:'Bilal',emoji:'👨🏽',corridor:CORRIDORS[7]},
+    {name:'Fatima',emoji:'🧕🏽',corridor:CORRIDORS[0]},
+    {name:'Landlord',emoji:'🏠',corridor:CORRIDORS[7]},
+  ],
+  jamiya:null, lessonsDone:['c3l1'],
+};
+
+/* ================= HELPERS ================= */
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const fmt2=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+function daysInMonth(){const d=new Date();return new Date(d.getFullYear(),d.getMonth()+1,0).getDate()}
+function today(){return new Date().getDate()}
+function daysLeft(){return Math.max(1,daysInMonth()-today()+1)}
+function monthName(){return new Date().toLocaleString('en-US',{month:'long'})}
+function greetWord(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening'}
+function daysUntil(day){let d=day-today();if(d<0)d+=daysInMonth();return d}
+function dueText(day){const d=daysUntil(day);return d===0?'today':d===1?'tomorrow':'in '+d+' days'}
+
+/* ================= DERIVED MONEY MATH ================= */
+function country(){return COUNTRIES.find(c=>c.id===S.country)||COUNTRIES[0]}
+function sym(){return country().sym}
+function taxInfo(){return calcTax(S.grossYear||S.income*12,country())}
+function billsTotal(){return S.bills.reduce((a,b)=>a+b.amount,0)+(S.otherBills||0)}
+function envelopesTotal(){return S.envelopes.reduce((a,e)=>a+e.amount,0)}
+function spentSoFar(){ /* simulated spend, proportional to day of month */
+  const frac=Math.min(1,today()/daysInMonth());
+  return CAT_DEFS.reduce((a,c)=>a+c.share*S.income*frac*(c.name==='Food delivery'?1.35:1),0);
+}
+function catSpent(c){const frac=Math.min(1,today()/daysInMonth());return c.share*S.income*frac*(c.name==='Food delivery'?1.35:1)}
+function catBudget(c){return c.budgetShare*S.income}
+function setAside(){return S.rent+billsTotal()+S.saveMonthly+S.remit}
+function discretionary(){return Math.max(0,S.income-setAside())}
+function safeToday(){
+  const left=discretionary()-spentSoFar();
+  return Math.max(0,left/daysLeft());
+}
+function balance(){return S.income-spentSoFar()-(today()>=S.rentDay?S.rent:0)+envelopesTotal()*0}
+function activeSubs(){return SUBS.filter(s=>!subsCancelled.includes(s.name))}
+
+/* ================= FLOW: LANDING / ONBOARDING ================= */
+let obSel={country:'ae',bills:['phone','utilities'],corridor:'pk',goal:'eid'};
+function obCountry(){return COUNTRIES.find(c=>c.id===obSel.country)||COUNTRIES[0]}
+function obIncomeMonthly(){
+  const v=parseFloat($('ob-income').value)||0; const c=obCountry();
+  return c.period==='year'?v/12:v;
+}
+function obGrossYear(){const v=parseFloat($('ob-income').value)||0;const c=obCountry();return c.period==='year'?v:v*12}
+function updateTaxPreview(){
+  const c=obCountry();
+  $('ob-incomecur').textContent=c.sym;
+  $('ob-incomeperiod').textContent=c.period==='year'?'per year':'per month';
+  const gy=obGrossYear();
+  if(!gy){$('ob-taxpreview').innerHTML=c.note;return}
+  const r=calcTax(gy,c);
+  if(c.id==='ae'){
+    $('ob-taxpreview').innerHTML='<b>'+c.flag+' '+c.name+':</b> no income tax. Your full '+c.sym+' '+fmt(gy/12)+'/month is take-home. That is the Dubai advantage, and Sanduq shows it.';
+  }else{
+    const effective=(r.total/gy*100);
+    $('ob-taxpreview').innerHTML='<b>'+c.flag+' Estimated tax:</b> '+c.sym+' '+fmt(r.total)+'/year ('+effective.toFixed(1)+'% effective'+(c.ni?', includes NI':'')+'). Take-home about <b>'+c.sym+' '+fmt(r.net/12)+'/month</b>. Sanduq budgets on take-home, not the headline number.';
+  }
+}
+function startDemo(){S=JSON.parse(JSON.stringify(DEMO));S.corridor=CORRIDORS[0];S.people.forEach((p)=>p.corridor=CORRIDORS[p.corridor.id==='ae'?7:0]);enterApp()}
+function startOnboard(){
+  $('landing').classList.add('hidden');$('onboard').classList.remove('hidden');
+  renderObChips();obGo(1);window.scrollTo(0,0);
+}
+function exitOnboard(){$('onboard').classList.add('hidden');$('landing').classList.remove('hidden')}
+function backToLanding(){$('appwrap').classList.add('hidden');$('landing').classList.remove('hidden');document.body.style.overflow=''}
+function renderObChips(){
+  $('ob-countries').innerHTML=COUNTRIES.map(c=>
+    '<button class="ob-chip'+(obSel.country===c.id?' sel':'')+'" onclick="obPickCountry(\''+c.id+'\',this)">'+c.flag+' '+c.name+'<small>'+(c.id==='ae'?'No income tax':'Tax modelled')+'</small></button>').join('');
+  $('ob-bills').innerHTML=BILL_PRESETS.map(b=>
+    '<button class="ob-chip'+(obSel.bills.includes(b.id)?' sel':'')+'" onclick="obToggleBill(\''+b.id+'\',this)">'+b.icon+' '+b.name+'<small>~AED '+b.amount+'</small></button>').join('');
+  $('ob-corridors').innerHTML=CORRIDORS.map(c=>
+    '<button class="ob-chip'+(obSel.corridor===c.id?' sel':'')+'" onclick="obPickCorridor(\''+c.id+'\',this)">'+c.flag+' '+c.name+'<small>'+(c.id==='ae'?'No transfers abroad':'AED → '+c.cur)+'</small></button>').join('');
+  $('ob-goals').innerHTML=GOAL_PRESETS.map(g=>
+    '<button class="ob-chip'+(obSel.goal===g.id?' sel':'')+'" onclick="obPickGoal(\''+g.id+'\',this)">'+g.icon+' '+g.name+'<small>target AED '+fmt(g.target)+'</small></button>').join('');
+  const inc=$('ob-income');if(inc&&!inc._wired){inc.addEventListener('input',updateTaxPreview);inc._wired=true;}
+}
+function obPickCountry(id,el){obSel.country=id;document.querySelectorAll('#ob-countries .ob-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');updateTaxPreview()}
+function obToggleBill(id,el){
+  if(obSel.bills.includes(id))obSel.bills=obSel.bills.filter(x=>x!==id);else obSel.bills.push(id);
+  el.classList.toggle('sel');
+}
+function obPickCorridor(id,el){obSel.corridor=id;document.querySelectorAll('#ob-corridors .ob-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
+function obPickGoal(id,el){obSel.goal=id;document.querySelectorAll('#ob-goals .ob-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel')}
+function obGo(n){
+  if(n===2&&!validOb1())return;
+  for(let i=1;i<=5;i++)$('ob'+i).classList.add('hidden');
+  $('ob'+n).classList.remove('hidden');
+  for(let i=2;i<=5;i++)$('obs'+i).classList.toggle('on',n>=i);
+  if(n===5)renderObSummary();
+}
+function validOb1(){
+  const inc=parseFloat($('ob-income').value);
+  if(!$('ob-name').value.trim()){toast('Your name first, so the app can talk to you');return false}
+  if(!inc||inc<100){toast('Enter your gross salary');return false}
+  return true;
+}
+function renderObSummary(){
+  const c=obCountry(); const gy=obGrossYear(); const r=calcTax(gy,c);
+  const inc=Math.round(r.net/12); /* take-home monthly in local currency */
+  const rent=parseFloat($('ob-rent').value)||0;
+  const bills=BILL_PRESETS.filter(b=>obSel.bills.includes(b.id)).reduce((a,b)=>a+b.amount,0)+(parseFloat($('ob-otherbills').value)||0);
+  const remit=parseFloat($('ob-remit').value)||0;
+  const save=parseFloat($('ob-savemonthly').value)||300;
+  const free=Math.max(0,inc-rent-bills-remit-save);
+  const sym=c.sym;
+  $('ob-summary').innerHTML=
+    '<div class="srow"><span>Gross salary</span><span class="money">'+sym+' '+fmt(gy/12)+'</span></div>'+
+    (c.id!=='ae'?'<div class="srow"><span>Tax'+(c.ni?' + NI':'')+'</span><span class="money">−'+fmt(r.total/12)+'</span></div>':'<div class="srow"><span>Income tax</span><span class="money">'+sym+' 0 · Dubai</span></div>')+
+    '<div class="srow"><span>Take-home</span><span class="money">'+sym+' '+fmt(inc)+'</span></div>'+
+    '<div class="srow"><span>Rent quarantined</span><span class="money">−'+fmt(rent)+'</span></div>'+
+    '<div class="srow"><span>Bills reserved</span><span class="money">−'+fmt(bills)+'</span></div>'+
+    (remit?'<div class="srow"><span>Family support</span><span class="money">−'+fmt(remit)+'</span></div>':'')+
+    '<div class="srow"><span>Savings envelope</span><span class="money">−'+fmt(save)+'</span></div>'+
+    '<div class="srow big"><span>Truly spendable / month</span><span class="money">'+sym+' '+fmt(free)+'</span></div>'+
+    '<div class="srow big"><span>Safe to spend / day</span><span class="money">'+sym+' '+fmt(free/daysInMonth())+'</span></div>';
+}
+function finishOnboard(){
+  const c=obCountry(); const gy=obGrossYear(); if(gy<3000){obGo(1);return}
+  const r=calcTax(gy,c); const takeHomeMonthly=Math.round(r.net/12);
+  const corridor=CORRIDORS.find(cc=>cc.id===obSel.corridor)||CORRIDORS[7];
+  const goal=GOAL_PRESETS.find(g=>g.id===obSel.goal)||GOAL_PRESETS[0];
+  const remit=parseFloat($('ob-remit').value)||0;
+  S={
+    demo:false,
+    name:$('ob-name').value.trim(),
+    country:c.id, grossYear:gy, income:takeHomeMonthly,
+    premium:false,
+    payday:Math.min(28,Math.max(1,parseInt($('ob-payday').value)||1)),
+    rent:parseFloat($('ob-rent').value)||0,
+    rentDay:Math.min(28,Math.max(1,parseInt($('ob-rentday').value)||21)),
+    bills:BILL_PRESETS.filter(b=>obSel.bills.includes(b.id)).map(b=>({...b})),
+    otherBills:parseFloat($('ob-otherbills').value)||0,
+    corridor:corridor, remit:remit,
+    saveMonthly:parseFloat($('ob-savemonthly').value)||300,
+    envelopes:[{icon:goal.icon,name:goal.name,amount:0,target:goal.target,gold:true}],
+    people:[],
+    jamiya:null, lessonsDone:[],
+  };
+  if(corridor.id!=='ae'){S.people.push({name:'Family',emoji:'👩🏽',corridor:corridor})}
+  S.people.push({name:'Landlord',emoji:'🏠',corridor:CORRIDORS[7]});
+  enterApp();
+}
+function enterApp(){
+  $('onboard').classList.add('hidden');$('landing').classList.add('hidden');
+  $('appwrap').classList.remove('hidden');document.body.style.overflow='hidden';
+  $('modeflag').textContent=S.demo?'Demo persona':'Your numbers · on device only';
+  payee=S.people[0]||null;amt=defaultAmt();
+  resetChat();renderAll();go('home');
+}
+/* ================= RENDER ================= */
+function renderAll(){renderHome();renderMoney();renderPay();renderSave();renderLearn()}
+
+function renderHome(){
+  $('h-greet').textContent=greetWord();
+  $('h-name').textContent=S.name;
+  $('h-avatar').textContent=S.name.slice(0,2).toUpperCase();
+  const safe=safeToday(), aside=setAside(), spent=spentSoFar();
+  $('h-safe').textContent=fmt(safe);
+  $('h-bal').textContent='AED '+fmt(S.income-spent);
+  $('h-aside').textContent='AED '+fmt(aside);
+  $('h-why').innerHTML='Rent, your bills and <b>AED '+fmt(S.saveMonthly+S.remit)+' of savings and family support</b> are already set aside. Whatever you spend from this is truly yours to spend.';
+  /* insight: biggest leak */
+  const fd=CAT_DEFS[1],fdSpent=catSpent(fd),fdBudget=catBudget(fd);
+  const gym=activeSubs().find(s=>s.unused);
+  let ins;
+  if(gym)ins='<b>'+gym.name+' took AED '+fmt(gym.amount)+' again, and you have not used it in 6 weeks.</b> Stopping it puts AED '+fmt(gym.amount*12)+' a year back in your pocket.';
+  else if(fdSpent>fdBudget)ins='<b>Food delivery quietly took AED '+fmt(fdSpent)+' this month.</b> Cooking two more nights a week would put about AED '+fmt(fdSpent*.35)+' back in your pocket.';
+  else ins='<b>No leaks found this week.</b> Your spending is inside every budget. Keep the streak.';
+  $('h-insight').innerHTML='<div class="dot">!</div><div><p>'+ins+'</p><button onclick="askFromInsight()">Ask Sanduq about it →</button></div>';
+  /* bills */
+  let bh='';
+  if(S.rent>0)bh+=billRow('🏠','Rent','Money already set aside ✓','AED '+fmt(S.rent),dueText(S.rentDay),daysUntil(S.rentDay)<=3);
+  S.bills.forEach(b=>{bh+=billRow(b.icon,b.name,'Paid every month','AED '+fmt(b.amount),dueText(15),daysUntil(15)<=3)});
+  if(S.otherBills)bh+=billRow('🧾','Other monthly bills','As you told us','AED '+fmt(S.otherBills),'this month',false);
+  $('h-bills').innerHTML=bh||'<p class="sub">No bills added. Lucky you.</p>';
+  /* envelopes */
+  $('h-envs').innerHTML=S.envelopes.map(envCard).join('');
+  /* txns simulated */
+  const tx=[
+    {icon:'🛒',name:'Lulu Hypermarket',note:'Groceries · today',amt:'−AED 86.50'},
+    {icon:'💼',name:'Salary',note:monthName()+' '+S.payday,amt:'+AED '+fmt2(S.income),in:true},
+    {icon:'🍔',name:'Talabat',note:'Food delivery · yesterday',amt:'−AED 47.00'},
+  ];
+  $('h-txns').innerHTML=tx.map(t=>'<div class="bill"><div class="bicon">'+t.icon+'</div><div class="bmain"><b>'+t.name+'</b><span>'+t.note+'</span></div><div class="bamt"><div class="money'+(t.in?' in':'')+'">'+t.amt+'</div></div></div>').join('');
+  $('h-simnote').textContent=S.demo?'Demo persona data.':'Salary and bills are your real numbers. Day to day transactions are simulated until a bank connection exists, which is honest to say out loud.';
+  $('h-prem-banner').classList.toggle('hidden',!S.demo&&S.premium);
+}
+function billRow(icon,name,note,amt,due,urgent){
+  return '<div class="bill'+(urgent?' due-soon':'')+'"><div class="bicon">'+icon+'</div><div class="bmain"><b>'+name+'</b><span>'+note+'</span></div><div class="bamt"><div class="money">'+amt+'</div><small>'+due+'</small></div></div>';
+}
+function envCard(e,i){
+  const pct=Math.min(100,e.target?e.amount/e.target*100:100);
+  return '<div class="envelope'+(e.gold?' gold':'')+'" onclick="go(\'save\')"><div class="flap"></div><div class="seal">'+e.icon+'</div><b>'+e.name+'</b><div class="money">AED '+fmt(e.amount)+'</div><small>of AED '+fmt(e.target)+'</small><div class="bar"><i style="width:'+pct+'%"></i></div></div>';
+}
+
+function renderMoney(){
+  /* tax breakdown card */
+  const c=country(), ti=taxInfo(), gy=S.grossYear||S.income*12;
+  const tc=$('m-tax-card');
+  if(c.id==='ae'){
+    tc.innerHTML='<div class="card-head"><h2>🧾 Your tax</h2><span class="money" style="font-size:14px;color:var(--good)">'+c.sym+' 0</span></div>'+
+      '<p class="sub">You earn in <b>'+c.flag+' '+c.name+'</b>, which charges <b>no personal income tax</b>. Your gross is your take-home: '+c.sym+' '+fmt(S.income)+' a month, all yours.</p>'+
+      '<div class="plain" style="margin-top:10px">Most apps ignore this. Sanduq shows it so you feel the Dubai advantage. VAT of '+c.vat+'% still applies on most purchases, already baked into prices you see.</div>';
+  }else{
+    const effective=(ti.total/gy*100);
+    tc.innerHTML='<div class="card-head"><h2>🧾 Salary to take-home</h2><span class="money" style="font-size:14px">'+c.flag+' '+c.name+'</span></div>'+
+      '<div class="receipt" style="margin-top:0;border:none;padding:0">'+
+      '<div class="rrow"><span>Gross salary / year</span><span class="money">'+c.sym+' '+fmt(gy)+'</span></div>'+
+      (c.deduction?'<div class="rrow"><span>Standard deduction</span><span class="money">−'+fmt(c.deduction)+'</span></div>':'')+
+      '<div class="rrow"><span>Income tax</span><span class="money">−'+fmt(ti.tax)+'</span></div>'+
+      (ti.ni?'<div class="rrow"><span>National Insurance</span><span class="money">−'+fmt(ti.ni)+'</span></div>':'')+
+      '<div class="rrow"><span><b>Take-home / year</b></span><b class="money">'+c.sym+' '+fmt(ti.net)+'</b></div>'+
+      '<div class="rrow"><span>Effective rate</span><span class="money">'+effective.toFixed(1)+'%</span></div>'+
+      '<div class="rrow"><span><b>Take-home / month</b></span><b class="money" style="color:var(--leaf)">'+c.sym+' '+fmt(ti.net/12)+'</b></div>'+
+      '</div>'+
+      '<div class="plain" style="margin-top:10px"><b>Why this matters:</b> '+c.note+' Sanduq budgets on the '+c.sym+' '+fmt(ti.net/12)+' you actually keep, never the headline salary. That is the number most people get wrong.</div>';
+  }
+  const spent=spentSoFar();
+  $('m-sub').textContent=monthName()+' so far · salary came in on day '+S.payday;
+  $('m-total').textContent='AED '+fmt(spent);
+  $('m-cats').innerHTML=CAT_DEFS.map(c=>{
+    const sp=catSpent(c),bu=catBudget(c),pct=Math.min(100,sp/bu*100);
+    const cls=sp>bu?'over':pct>88?'warn':'';
+    let note;
+    if(sp>bu)note='<div class="note alert">AED '+fmt(sp-bu)+' over what you planned. This is the leak.</div>';
+    else if(pct>88)note='<div class="note">Almost at the limit with '+daysLeft()+' days left. Go gently.</div>';
+    else note='<div class="note">On track. About AED '+fmt((bu-sp)/daysLeft())+' a day left here.</div>';
+    return '<div class="cat"><div class="cat-top"><b>'+c.icon+' '+c.name+'</b><span class="money">'+fmt(sp)+' / '+fmt(bu)+'</span></div><div class="track"><i class="'+cls+'" style="width:'+pct+'%"></i></div>'+note+'</div>';
+  }).join('');
+  const subs=activeSubs();
+  $('m-subs-total').textContent='AED '+fmt(subs.reduce((a,s)=>a+s.amount,0));
+  $('m-subs').innerHTML=SUBS.map(s=>{
+    const off=subsCancelled.includes(s.name);
+    return '<div class="bill"><div class="bicon">'+s.icon+'</div><div class="bmain"><b>'+s.name+'</b>'+(off?'<span>Stopped ✓ AED '+fmt(s.amount)+'/month stays yours</span>':(s.unused?'<span class="subflag">Not used in 6 weeks</span>':'<span>'+s.note+'</span>'))+'</div><div class="bamt" style="display:flex;align-items:center;gap:10px"><div class="money" style="'+(off?'text-decoration:line-through;opacity:.5':'')+'">AED '+s.amount+'</div>'+((s.unused&&!off)?'<button class="ghostbtn" onclick="cancelSub(\''+s.name+'\')">Stop it</button>':'')+'</div></div>';
+  }).join('');
+  const gym=activeSubs().find(s=>s.unused);
+  const fdOver=Math.max(0,catSpent(CAT_DEFS[1])-catBudget(CAT_DEFS[1]));
+  const freed=(gym?gym.amount:0)+fdOver;
+  $('m-plain').innerHTML=freed>0
+    ?'<b>In plain words:</b> '+(gym?'stop the gym you are not using':'keep delivery inside its budget')+(gym&&fdOver?' and rein in delivery':'')+', and you free up about <b>AED '+fmt(freed)+' every month</b>. That is AED '+fmt(freed*12)+' a year, found, not earned.'
+    :'<b>In plain words:</b> no obvious leaks right now. Your subscriptions are all in use and budgets are holding.';
+}
+
+/* ================= PAY ================= */
+let payee=null, amt=0;
+function defaultAmt(){return S.remit>0?S.remit:Math.round(discretionary()*0.15/50)*50||100}
+function renderPay(){
+  if(!payee)payee=S.people[0]||null;
+  if(!amt)amt=defaultAmt();
+  $('p-people').innerHTML=S.people.map((p,i)=>
+    '<button class="person'+(payee&&payee.name===p.name?' sel':'')+'" onclick="pickPerson('+i+')"><span class="pa">'+p.emoji+'</span><span>'+p.name+'</span><small>'+p.corridor.flag+' '+(p.corridor.id==='ae'?'UAE':p.corridor.name)+'</small></button>'
+  ).join('')+'<button class="person" onclick="openPersonModal()"><span class="pa">＋</span><span>Add new</span><small>&nbsp;</small></button>';
+  const opts=[Math.round(defaultAmt()/2/50)*50||50,defaultAmt(),Math.round(defaultAmt()*1.8/50)*50];
+  $('p-quick').innerHTML=opts.map(o=>'<button class="qa'+(o===amt?' sel':'')+'" onclick="pickAmt('+o+',this)">'+fmt(o)+'</button>').join('');
+  updateAfford();
+}
+function pickPerson(i){payee=S.people[i];renderPay()}
+function pickAmt(a,el){amt=a;$('p-custom').value='';document.querySelectorAll('.qa').forEach(q=>q.classList.remove('sel'));el.classList.add('sel');updateAfford()}
+function customAmt(v){const a=parseFloat(v);if(a>0){amt=a;document.querySelectorAll('.qa').forEach(q=>q.classList.remove('sel'));updateAfford()}}
+function updateAfford(){
+  const n=$('p-afford');if(!payee){n.innerHTML='Add someone first.';return}
+  const reserved=S.remit;
+  if(amt<=reserved&&payee.corridor.id!=='ae'){
+    n.className='plain';
+    n.innerHTML='<b>Can you afford it?</b> Yes. AED '+fmt(amt)+' is covered by the AED '+fmt(reserved)+' you set aside for family every month. Sending it will not touch rent or bills.';
+  }else{
+    const extra=payee.corridor.id==='ae'?amt:amt-reserved;
+    const perDay=Math.max(0,(discretionary()-spentSoFar()-extra)/daysLeft());
+    if(extra<=0){n.className='plain';n.innerHTML='<b>Can you afford it?</b> Yes, this fits inside what you already planned.';}
+    else if(perDay>20){n.className='plain';n.innerHTML='<b>Can you afford it?</b> Yes, but it comes from your spending money. After sending, you would have about <b>AED '+fmt(perDay)+' a day</b> until salary. Doable.';}
+    else{n.className='plain warn';n.innerHTML='<b>Careful.</b> AED '+fmt(amt)+' is more than what is set aside. The extra AED '+fmt(extra)+' would leave you about <b>AED '+fmt(perDay)+' a day</b> until salary. That is tight. Consider sending less now and the rest next payday.';}
+  }
+}
+function feeFor(a,c){return c.id==='ae'?(a<=1000?0:2):Math.max(10,Math.round(a*0.023))}
+function payStep(s){
+  if(!payee){toast('Pick who it is for first');return}
+  ['pay1','pay2','pay3'].forEach((id,i)=>$(id).classList.toggle('hidden',i+1!==s));
+  const c=payee.corridor, fee=feeFor(amt,c);
+  const recv=c.id==='ae'?'AED '+fmt(amt):c.cur+' '+fmt(amt*c.rate);
+  if(s===2){
+    $('p-receipt').innerHTML=
+      '<div class="rrow"><span>Going to</span><b>'+payee.name+' · '+(c.id==='ae'?'UAE':c.name)+'</b></div>'+
+      '<div class="rrow"><span>You send</span><span class="money">AED '+fmt2(amt)+'</span></div>'+
+      '<div class="rrow"><span>Transfer fee</span><span class="money">'+(fee?'AED '+fmt2(fee):'Free')+'</span></div>'+
+      (c.id!=='ae'?'<div class="rrow"><span>Exchange rate</span><span class="money">1 AED = '+c.rate+' '+c.cur+'</span></div>':'')+
+      '<div class="rrow"><span><b>They receive</b></span><b class="money">'+recv+'</b></div>'+
+      '<div class="rrow"><span>Arrives</span><span>'+(c.id==='ae'?'Instantly':'Within 30 minutes to '+c.wallet)+'</span></div>';
+    $('p-plain2').innerHTML='<b>In plain words:</b> AED '+fmt2(amt+fee)+' leaves your account in total. '+payee.name+' gets <b>'+recv+'</b>'+(c.id==='ae'?'':' in their '+c.wallet)+'. '+(c.id!=='ae'?'A typical exchange house would cost roughly AED '+fmt(fee+9)+' for the same transfer once the rate margin is counted, so this is about <b>AED 9 cheaper</b>.':'No fee games, no waiting.');
+  }
+  if(s===3){
+    $('p-done-title').textContent='Sent to '+payee.name;
+    $('p-done-sub').innerHTML=recv+' is on its way'+(c.id==='ae'?'.':' to their '+c.wallet+'.')+'<br>We will tell you the moment it lands.';
+    $('p-done-receipt').innerHTML=
+      '<div class="rrow"><span>Left your account</span><span class="money">AED '+fmt2(amt+fee)+'</span></div>'+
+      '<div class="rrow"><span>Covered by</span><span>'+(amt<=S.remit&&c.id!=='ae'?'Family support envelope 👨‍👩‍👧':'Safe to spend money')+'</span></div>'+
+      '<div class="rrow"><span>Reference</span><span class="money">SDQ-'+(10000+Math.floor(Math.random()*89999))+'</span></div>';
+    $('p-done-plain').innerHTML=(amt<=S.remit&&c.id!=='ae')
+      ?'Your <b>safe to spend today</b> did not change, because this money was already set aside. That is the whole point of envelopes.'
+      :'Your <b>safe to spend today</b> just adjusted to keep you honest. Check the home screen.';
+    toast('Transfer sent');renderHome();
+  }
+  $('scr-pay').scrollTop=0;
+}
+function cancelSub(name){subsCancelled.push(name);toast(name.split(' ')[0]+' will not charge you again');renderMoney();renderHome()}
+
+/* ================= SAVE / ENVELOPES / JAMIYA ================= */
+function renderSave(){
+  $('s-envs').innerHTML=S.envelopes.map((e,i)=>{
+    const pct=Math.min(100,e.target?e.amount/e.target*100:100), togo=Math.max(0,e.target-e.amount);
+    const weeks=Math.max(1,Math.round(togo/ (S.saveMonthly/4||75)));
+    const note= togo>0
+      ?'AED '+fmt(togo)+' to go. At AED '+fmt(S.saveMonthly)+' a month set aside, this fills in about '+Math.ceil(togo/S.saveMonthly)+' month'+(Math.ceil(togo/S.saveMonthly)>1?'s':'')+'.'
+      :'Envelope full. Done. '+e.icon;
+    return '<div class="card"><div class="card-head"><h2>'+e.icon+' '+e.name+'</h2><span class="money" style="font-size:14px">AED '+fmt(e.amount)+'</span></div><div class="track" style="height:10px"><i style="width:'+pct+'%;'+(e.gold?'background:var(--marigold)':'')+'"></i></div><p class="sub" style="margin-top:8px">'+note+'</p><button class="btn gold" style="margin-top:12px" onclick="deposit('+i+',50)">Drop in AED 50 now</button></div>';
+  }).join('');
+  renderJam();
+}
+function deposit(i,a){
+  const e=S.envelopes[i];e.amount=Math.min(e.target,e.amount+a);
+  toast('AED '+a+' tucked into '+e.name);renderSave();renderHome();
+}
+function openEnvModal(){
+  openModal('<h3>Start a new envelope</h3><p class="sub">Name it after the thing, not the number. You save for things.</p>'+
+  '<div class="ob-field"><label>What for?</label><input class="ob-input" id="env-name" placeholder="e.g. New laptop" maxlength="22"></div>'+
+  '<div class="ob-field"><label>Target amount</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="env-target" type="number" inputmode="numeric" placeholder="3000"></div></div>'+
+  '<div class="ob-field"><label>Pick a seal</label><div class="emoji-pick" id="env-emoji"></div></div>'+
+  '<button class="btn" onclick="createEnv()">Create envelope</button>');
+  const ems=['💻','✈️','🎓','🚗','💍','🏠','🛟','🌙','📱','🎁'];
+  $('env-emoji').innerHTML=ems.map((e,i)=>'<button class="'+(i===0?'sel':'')+'" onclick="document.querySelectorAll(\'#env-emoji button\').forEach(b=>b.classList.remove(\'sel\'));this.classList.add(\'sel\')">'+e+'</button>').join('');
+}
+function createEnv(){
+  const name=$('env-name').value.trim(), target=parseFloat($('env-target').value);
+  if(!name||!target){toast('Give it a name and a target');return}
+  const emoji=document.querySelector('#env-emoji button.sel').textContent;
+  S.envelopes.push({icon:emoji,name:name,amount:0,target:target});
+  closeModal();toast('Envelope created. First dirham is the hardest.');renderSave();renderHome();
+}
+function renderJam(){
+  if(!S.jamiya){
+    $('s-jam').innerHTML='<span class="eyebrow">Jam\'iya · money circle</span><h3>Save with your people, the old way</h3><p>A jam\'iya is the committee system: a group each puts in the same amount monthly, and each month one member collects the whole pot. <b>It is how millions save for big things without loans or interest.</b> Sanduq adds what paper never had: receipts, reminders and a schedule nobody can argue about.</p><button class="whylink" onclick="explainJam()">How does it work exactly?</button><button class="btn" style="background:var(--marigold);color:#3D2B07;margin-top:14px" onclick="openJamModal()">Start or join a circle</button>';
+  }else{
+    const j=S.jamiya, pot=j.amount*j.members;
+    const names=['SH','RA','MK','AN','FK','TJ','NB'].slice(0,j.members-1);
+    $('s-jam').innerHTML='<span class="eyebrow">Jam\'iya · money circle</span><h3>'+j.name+' · AED '+fmt(j.amount)+' a month</h3><p>You and '+(j.members-1)+' others each put in AED '+fmt(j.amount)+' monthly. One member collects the full <b>AED '+fmt(pot)+'</b> each month, in a fixed order everyone agreed to.</p><div class="members">'+names.slice(0,Math.floor(j.members/2)).map(n=>'<i>'+n+'</i>').join('')+'<i class="you">You</i>'+names.slice(Math.floor(j.members/2)).map(n=>'<i>'+n+'</i>').join('')+'</div><p style="margin-top:12px"><b>'+j.month+' is your month.</b> You collect AED '+fmt(pot)+'. Until then, your part is auto scheduled on the 25th.</p><button class="btn" style="background:var(--marigold);color:#3D2B07;margin-top:14px" onclick="toast(\'This month\\u2019s AED '+fmt(j.amount)+' is scheduled for the 25th\')">Schedule this month\'s AED '+fmt(j.amount)+'</button>';
+  }
+}
+function explainJam(){
+  openModal('<h3>How a jam\'iya works</h3>'+
+  '<p class="sub" style="margin-bottom:10px">Say 6 people each commit AED 500 a month, for 6 months.</p>'+
+  '<div class="receipt" style="margin-top:0"><div class="rrow"><span>Every month, the pot is</span><b class="money">AED 3,000</b></div><div class="rrow"><span>Month 1</span><span>Sara collects 3,000</span></div><div class="rrow"><span>Month 2</span><span>Rashid collects 3,000</span></div><div class="rrow"><span>...</span><span>and so on, fixed order</span></div><div class="rrow"><span>Your month</span><b>You collect 3,000</b></div></div>'+
+  '<p class="sub" style="margin:12px 0">You pay in AED 3,000 over 6 months and you take out AED 3,000. No interest, no bank, no loan application. What you gain is <b>timing</b>: a lump sum exactly when you need it, and the social commitment that makes you actually save.</p>'+
+  '<p class="sub" style="margin-bottom:12px"><b>What Sanduq adds:</b> a written schedule, automatic reminders, receipts for every payment, and a record if anyone is late. The trust stays human. The bookkeeping stops being.</p>'+
+  '<button class="btn" onclick="closeModal();openJamModal()">Start a circle</button>');
+}
+function openJamModal(){
+  openModal('<h3>Set up your circle</h3><p class="sub">You bring the people. Sanduq brings the bookkeeping.</p>'+
+  '<div class="ob-field"><label>Circle name</label><input class="ob-input" id="jam-name" placeholder="e.g. Office circle" maxlength="24"></div>'+
+  '<div class="ob-field"><label>Monthly amount each</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="jam-amt" type="number" inputmode="numeric" placeholder="500"></div></div>'+
+  '<div class="ob-field"><label>How many people, including you</label><div class="ob-money"><span class="cur">Ppl</span><input class="ob-input" id="jam-mem" type="number" inputmode="numeric" placeholder="6" min="3" max="12"></div></div>'+
+  '<div class="ob-field"><label>Your payout month</label><input class="ob-input" id="jam-month" placeholder="e.g. August"></div>'+
+  '<p class="ob-note" id="jam-preview">Your pot preview appears here.</p>'+
+  '<button class="btn" onclick="createJam()">Commit to this circle</button>');
+  ['jam-amt','jam-mem'].forEach(id=>$(id).addEventListener('input',()=>{
+    const a=parseFloat($('jam-amt').value)||0,m=parseInt($('jam-mem').value)||0;
+    if(a&&m)$('jam-preview').innerHTML='You pay <b>AED '+fmt(a)+' × '+m+' months = AED '+fmt(a*m)+'</b> in total, and on your month you collect <b>AED '+fmt(a*m)+'</b> at once. Interest paid: zero.';
+  }));
+}
+function createJam(){
+  const name=$('jam-name').value.trim()||'My circle', a=parseFloat($('jam-amt').value), m=parseInt($('jam-mem').value), mo=$('jam-month').value.trim()||'August';
+  if(!a||!m||m<3){toast('Amount and at least 3 people needed');return}
+  S.jamiya={name:name,amount:a,members:Math.min(12,m),month:mo};
+  closeModal();toast('Circle committed. Invites would go out in the full app.');renderSave();
+}
+/* add person */
+function openPersonModal(){
+  openModal('<h3>Add someone</h3><p class="sub">Who you send to, and where they are. The corridor sets the currency.</p>'+
+  '<div class="ob-field"><label>Name</label><input class="ob-input" id="np-name" placeholder="e.g. Ammi" maxlength="16"></div>'+
+  '<div class="ob-field"><label>Where are they?</label><div class="ob-chips ob-grid2" id="np-corr"></div></div>'+
+  '<div class="ob-field"><label>Pick a face</label><div class="emoji-pick" id="np-emoji"></div></div>'+
+  '<button class="btn" onclick="createPerson()">Save person</button>');
+  $('np-corr').innerHTML=CORRIDORS.map((c,i)=>'<button class="ob-chip'+(i===0?' sel':'')+'" data-c="'+c.id+'" onclick="document.querySelectorAll(\'#np-corr .ob-chip\').forEach(x=>x.classList.remove(\'sel\'));this.classList.add(\'sel\')">'+c.flag+' '+c.name+'<small>'+(c.id==='ae'?'Local AED':'AED → '+c.cur)+'</small></button>').join('');
+  const ems=['👩🏽','👨🏽','🧕🏽','👴🏽','👵🏽','🧑🏽','🏠','🧒🏽'];
+  $('np-emoji').innerHTML=ems.map((e,i)=>'<button class="'+(i===0?'sel':'')+'" onclick="document.querySelectorAll(\'#np-emoji button\').forEach(b=>b.classList.remove(\'sel\'));this.classList.add(\'sel\')">'+e+'</button>').join('');
+}
+function createPerson(){
+  const name=$('np-name').value.trim();
+  if(!name){toast('They need a name');return}
+  const cid=document.querySelector('#np-corr .ob-chip.sel').dataset.c;
+  const emoji=document.querySelector('#np-emoji button.sel').textContent;
+  const p={name:name,emoji:emoji,corridor:CORRIDORS.find(c=>c.id===cid)};
+  S.people.push(p);payee=p;closeModal();toast(name+' added');renderPay();
+}
+/* modal plumbing */
+function openModal(html){$('modal-card').innerHTML=html;$('modal').classList.add('show')}
+function closeModal(){$('modal').classList.remove('show')}
+/* ================= LEARN: REAL CONTENT ================= */
+const COURSES=[
+ {title:'Banks, decoded',icon:'🏦',lessons:[
+  {id:'c1l1',icon:'🧾',title:'The fee for being too poor',mins:2,
+   body:'<p>Many banks charge around <b>AED 25 every month</b> if your balance dips below a set minimum, often AED 3,000. That is AED 300 a year for the crime of not having enough money.</p><p>Two honest fixes: keep the minimum parked there and treat it as untouchable, or move to a <b>zero balance account</b>. Several UAE banks and digital banks offer accounts with no minimum and no monthly fee. Switching takes one visit or one app download.</p><p>Rule of thumb: <b>a bank should pay you to hold your money, never the reverse.</b></p>',
+   quiz:{q:'Your balance dropped to AED 2,100 for one day this month. What likely happens?',opts:['Nothing, fees only apply if you stay low all month','The monthly minimum balance fee gets charged','The bank closes the account'],correct:1,why:'Most banks check if your balance fell below the minimum at any point or on average. One bad day can trigger the fee. A zero balance account makes the problem disappear.'}},
+  {id:'c1l2',icon:'📉',title:'Flat rate: the friendly looking trap',mins:3,
+   body:'<p>A loan advertised at <b>5.99% flat</b> sounds cheap. It is not. Flat rate charges interest on the <b>full original amount for the whole loan</b>, even the part you already paid back.</p><p>On a 4 year loan, 5.99% flat works out to roughly <b>11% per year</b> in real terms. The honest measure is called the <b>reducing rate</b>, where interest only applies to what you still owe.</p><p>Before signing anything, ask one question: <b>"What is the reducing rate?"</b> If the salesperson dodges, you have your answer.</p>',
+   quiz:{q:'Which loan is cheaper: 6% flat or 9% reducing?',opts:['6% flat, smaller number','9% reducing, flat roughly doubles','They cost the same'],correct:1,why:'6% flat is roughly 11% in reducing terms. The 9% reducing loan is the cheaper one despite the bigger number on the poster.'}},
+  {id:'c1l3',icon:'💳',title:'Debit and credit are not cousins',mins:2,
+   body:'<p>A <b>debit card spends your money</b>. A <b>credit card spends the bank\'s money</b>, and if you do not pay it back in full each month, the bank charges roughly <b>3% per month</b>, which compounds to around 40% a year.</p><p>Credit cards reward people who pay the full balance monthly and punish everyone else. If you have ever carried a balance "just this month", the card is costing you more than its perks return.</p><p>The safe order: emergency envelope first, then a card you settle in full, always.</p>',
+   quiz:{q:'You pay only the "minimum due" on a credit card. What is really happening?',opts:['The debt is shrinking nicely','Mostly interest is being paid, the debt barely moves','The bank waives interest as a thank you'],correct:1,why:'Minimum payments are designed so the debt lasts years. Most of each payment goes to interest, not to what you owe.'}},
+  {id:'c1l4',icon:'🔢',title:'IBAN: your money\'s home address',mins:2,
+   body:'<p>An IBAN is just the <b>address of your account</b>, the way a building has one. AE plus 21 digits. Anyone sending you money, including your employer, needs it.</p><p>Two things to know: sharing your IBAN is <b>safe</b>, people can only put money in with it, not take it out. And one typo sends money to the wrong place, so always copy and paste, never type it.</p>',
+   quiz:{q:'A buyer on a marketplace asks for your IBAN to pay you. Risky?',opts:['Yes, they can empty the account','No, an IBAN only lets people send money in','Only risky on weekends'],correct:1,why:'An IBAN alone cannot be used to withdraw your money. Withdrawals need your card, PIN, OTP codes or signature. Never share those.'}},
+ ]},
+ {title:'Stop the leaks',icon:'🔍',lessons:[
+  {id:'c2l1',icon:'📋',title:'The 10 minute subscription audit',mins:2,
+   body:'<p>The average resident leaks <b>hundreds of dirhams monthly</b> through recurring charges they forgot. Gyms are the classic: sign up in January, stop going in February, pay until December.</p><p>The audit: open your bank statement, search for the same merchant appearing monthly, and list everything. For each one ask: <b>did I use this in the last 30 days?</b> No means cancel today, not "soon".</p><p>Canceling an unused AED 199 gym returns <b>AED 2,388 a year</b>. That is a flight home, found in ten minutes.</p>',
+   quiz:{q:'The strongest sign a subscription should go?',opts:['It feels expensive','You have not used it in 30 days','A friend cancelled theirs'],correct:1,why:'Price is not the test, use is. A cheap subscription you never use is 100% waste. An expensive one you use daily can be the best money you spend.'}},
+  {id:'c2l2',icon:'⏳',title:'The 24 hour rule',mins:2,
+   body:'<p>Most regret purchases share one feature: they were decided in <b>under a minute</b>. The fix is embarrassingly simple. Anything non essential over AED 100: <b>wait 24 hours</b> before buying.</p><p>If you still want it tomorrow, buy it without guilt, it passed the test. Most of the time the urge dies overnight, because the urge was the dopamine of deciding, not the thing itself.</p><p>This single rule typically cuts impulse spending by a third. No app needed, although Sanduq will happily remind you.</p>',
+   quiz:{q:'The 24 hour rule works mainly because:',opts:['Prices drop overnight','The urge to buy usually fades once the moment passes','Shops are closed at night'],correct:1,why:'Impulse urges are spikes, not steady states. Sleep on it and the spike is gone. What survives the night is a real want.'}},
+  {id:'c2l3',icon:'🌙',title:'The 9pm delivery pattern',mins:2,
+   body:'<p>Look at your delivery orders. For most people the majority happen <b>after 9pm on weekdays</b>. That is not hunger for restaurant food, that is tiredness deciding for you.</p><p>The counter move is preparation, not willpower: something ready to eat at home for tired nights. One rule that works: <b>delivery on weekends only</b>. It keeps the pleasure and removes the leak.</p><p>For a typical user that one rule keeps <b>AED 100 to 150 a month</b> in their pocket.</p>',
+   quiz:{q:'Best defence against late night delivery spending?',opts:['Deleting the apps forever','Having easy food ready for tired nights, plus a weekday rule','Skipping dinner'],correct:1,why:'Bans break. Making the good choice the easy choice is what lasts: food ready at home plus a simple rule beats willpower every time.'}},
+ ]},
+ {title:'Send money home, smarter',icon:'✈️',lessons:[
+  {id:'c3l1',icon:'🪤',title:'"Zero fees" is rarely zero',mins:3,
+   body:'<p>The trick of the remittance world: advertise <b>"0 fee"</b> and hide the profit in the <b>exchange rate</b>. If the real rate is 76.9 and you are offered 75.2, you paid a fee, it just was not called one.</p><p>The only number that matters: <b>how much your family receives</b>. Compare that across two or three services for the same AED amount. The difference on AED 600 is often AED 15 to 25, every single month.</p><p>Sanduq shows the receive amount before you confirm, every time, because that is the honest price tag.</p>',
+   quiz:{q:'Service A: AED 15 fee, great rate. Service B: zero fee, weak rate. How do you choose?',opts:['B, zero fee always wins','Compare what the family actually receives from each','A, fees mean quality'],correct:1,why:'Fees and rates are two pockets of the same trousers. Only the receive amount tells the truth.'}},
+  {id:'c3l2',icon:'📅',title:'Stop guessing the rate',mins:2,
+   body:'<p>Rates move daily and nobody, truly nobody, can time them. Waiting for "a better rate" usually means sending in a panic later at a worse one.</p><p>The boring winning strategy: <b>send on a fixed schedule</b>, same date every month. Over a year you get the average rate, which beats most people\'s guessing, and your family can actually plan around the money.</p><p>Predictability is worth more to a household than a slightly better rate that arrives randomly.</p>',
+   quiz:{q:'The most reliable approach to exchange rates is:',opts:['Wait for the perfect day','Send the same amount on a fixed schedule','Send everything at year end'],correct:1,why:'A fixed schedule earns you the yearly average and gives your family a dependable income. Timing the market is a casino, even for professionals.'}},
+  {id:'c3l3',icon:'🏃',title:'Wallet, pickup or bank?',mins:2,
+   body:'<p>Three ways money arrives home, three tradeoffs. <b>Mobile wallets</b> (JazzCash, GCash, bKash): fastest, usually cheapest, money lands in minutes. <b>Cash pickup</b>: good where wallets are not used, but someone must travel to collect. <b>Bank deposit</b>: safest for large amounts, slowest for small ones.</p><p>Default to the wallet your family already uses. The best corridor is the one where the money is <b>usable the same hour</b> it arrives.</p>',
+   quiz:{q:'Sending AED 400 for this week\'s groceries back home. Usually best?',opts:['Bank deposit, always the safest','The mobile wallet the family already uses','Cash pickup in another city'],correct:1,why:'For small regular amounts, speed and usability win. A wallet the family already uses means groceries today, not paperwork tomorrow.'}},
+ ]},
+];
+function renderLearn(){
+  const done=S.lessonsDone.length, total=COURSES.reduce((a,c)=>a+c.lessons.length,0);
+  $('l-streak').textContent='🔥 '+done+' of '+total+' done';
+  $('l-courses').innerHTML=COURSES.map((c,ci)=>{
+    const cdone=c.lessons.filter(l=>S.lessonsDone.includes(l.id)).length;
+    return '<div class="card"><div class="course-head"><h2>'+c.icon+' '+c.title+'</h2><span class="cprog">'+cdone+' / '+c.lessons.length+'</span></div>'+
+    c.lessons.map((l,li)=>'<button class="lesson" onclick="openLesson('+ci+','+li+')"><span class="li">'+l.icon+'</span><span style="flex:1"><b>'+l.title+'</b><span>'+l.mins+' min · 1 quiz</span></span>'+(S.lessonsDone.includes(l.id)?'<span class="done">✓</span>':'')+'</button>').join('')+'</div>';
+  }).join('');
+}
+let curLesson=null;
+function openLesson(ci,li){
+  const l=COURSES[ci].lessons[li];curLesson=l;
+  openModal('<h3>'+l.icon+' '+l.title+'</h3><p class="sub">'+l.mins+' minute read · quiz at the end</p>'+
+    '<div style="font-size:14px;line-height:1.65;display:flex;flex-direction:column;gap:10px">'+l.body+'</div>'+
+    '<div class="card" style="margin-top:16px"><p style="font-size:14px;font-weight:600;line-height:1.5">'+l.quiz.q+'</p>'+
+    l.quiz.opts.map((o,i)=>'<button class="quiz-opt" onclick="lessonQuiz(this,'+i+')">'+o+'</button>').join('')+
+    '<p class="sub" id="lq-res" style="display:none;margin-top:10px"></p></div>');
+}
+function lessonQuiz(el,i){
+  const q=curLesson.quiz;
+  document.querySelectorAll('#modal-card .quiz-opt').forEach(o=>o.disabled=true);
+  const r=$('lq-res');r.style.display='block';
+  if(i===q.correct){el.classList.add('right');r.innerHTML='<b style="color:var(--good)">Correct.</b> '+q.why;}
+  else{el.classList.add('wrong');document.querySelectorAll('#modal-card .quiz-opt')[q.correct].classList.add('right');r.innerHTML='<b style="color:var(--brick)">Not quite.</b> '+q.why;}
+  if(!S.lessonsDone.includes(curLesson.id)){S.lessonsDone.push(curLesson.id);renderLearn();}
+  r.innerHTML+='<br><br><button class="btn" style="margin-top:0" onclick="closeModal()">Done, next lesson</button>';
+}
+
+/* ================= PREMIUM / PLANS ================= */
+function showPlans(){
+  openModal('<h3>Free vs Premium</h3><p class="sub">In this demo everything is on so you can try it all. Here is what each plan actually includes.</p>'+
+  '<div class="plan-grid">'+
+    '<div class="plan"><h3>Free</h3><div class="price">AED 0</div><div class="per">forever</div><ul>'+
+      '<li><span class="tick">✓</span><b>Safe to spend today</b></li>'+
+      '<li><span class="tick">✓</span>Take-home & tax breakdown</li>'+
+      '<li><span class="tick">✓</span>Up to 3 envelopes</li>'+
+      '<li><span class="tick">✓</span>Manual bill tracking</li>'+
+      '<li><span class="tick">✓</span>All money lessons</li>'+
+      '<li><span class="cross">✕</span>1 transfer corridor</li>'+
+      '<li><span class="cross">✕</span>Basic assistant only</li>'+
+    '</ul></div>'+
+    '<div class="plan pro"><h3>Premium</h3><div class="price">AED 19<small>/mo</small></div><div class="per">or AED 180/year</div><ul>'+
+      '<li><span class="tick">✓</span><b>Everything in Free</b></li>'+
+      '<li><span class="tick">✓</span><b>Auto-split on payday</b></li>'+
+      '<li><span class="tick">✓</span>Unlimited envelopes</li>'+
+      '<li><span class="tick">✓</span>Round-ups & auto-save rules</li>'+
+      '<li><span class="tick">✓</span>All 8 corridors + rate alerts</li>'+
+      '<li><span class="tick">✓</span>Jam\'iya circles with escrow</li>'+
+      '<li><span class="tick">✓</span>Full AI assistant</li>'+
+      '<li><span class="tick">✓</span>Leak detection & reports</li>'+
+    '</ul></div>'+
+  '</div>'+
+  '<div class="plain" style="margin-top:14px"><b>Why people pay:</b> Premium pays for itself the first month. The leak detector and auto-save typically free up AED 200 to 300 a month. Charging AED 19 to save someone AED 250 is an easy yes, and that is the business model: <b>aligned incentives, not hidden fees</b>.</div>'+
+  '<div class="plain" style="margin-top:10px"><b>Revenue beyond subscriptions:</b> a thin margin on transfers, an escrow fee on jam\'iya pots, and referral fees from the zero-fee bank accounts we recommend. Never ads, never selling data.</div>'+
+  '<button class="btn gold" onclick="closeModal();toast(\'Demo: Premium already unlocked for you\')">Start 14-day free trial</button>'+
+  '<button class="btn quiet" onclick="closeModal()">Maybe later</button>');
+}
+function openSettings(){
+  openModal('<h3>Settings</h3><p class="sub">Change the numbers, everything recalculates instantly.</p>'+
+  '<div class="ob-field"><label>Monthly salary</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="set-income" type="number" value="'+S.income+'"></div></div>'+
+  '<div class="ob-field"><label>Monthly rent</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="set-rent" type="number" value="'+S.rent+'"></div></div>'+
+  '<div class="ob-field"><label>Sent home monthly</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="set-remit" type="number" value="'+S.remit+'"></div></div>'+
+  '<div class="ob-field"><label>Saved into envelopes monthly</label><div class="ob-money"><span class="cur">AED</span><input class="ob-input" id="set-save" type="number" value="'+S.saveMonthly+'"></div></div>'+
+  '<button class="btn" onclick="saveSettings()">Save and recalculate</button>'+
+  '<button class="btn quiet" onclick="closeModal();'+(S.demo?'startOnboard()':'startDemo()')+'">'+(S.demo?'Switch to my own numbers':'Switch to demo persona')+'</button>'+
+  '<p class="ob-note">Prototype note: data lives in memory on this device and resets on refresh. The full app would store it encrypted on device with optional cloud backup.</p>');
+}
+function saveSettings(){
+  S.income=parseFloat($('set-income').value)||S.income;
+  S.rent=parseFloat($('set-rent').value)||0;
+  S.remit=parseFloat($('set-remit').value)||0;
+  S.saveMonthly=parseFloat($('set-save').value)||0;
+  closeModal();toast('Recalculated with your new numbers');renderAll();
+}
+
+/* ================= NAV / TOAST ================= */
+function go(s){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
+  $('scr-'+s).classList.add('active');
+  document.querySelectorAll('nav.appnav button').forEach(b=>b.classList.toggle('active',b.dataset.s===s));
+  $('scr-'+s).scrollTop=0;
+}
+let toastT;
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800)}
+
+/* ================= ASSISTANT ================= */
+function resetChat(){
+  $('chat').innerHTML='';
+  addMsg('Salaam '+S.name+' 👋 Ask me anything about your money. No question is too small, and I will never use a word you have to Google.','bot');
+}
+function openAsk(){$('scrim').classList.add('show');$('sheet').classList.add('show')}
+function closeAsk(){$('scrim').classList.remove('show');$('sheet').classList.remove('show')}
+function askFromInsight(){openAsk();setTimeout(()=>askChip('How do I plug my biggest leak?'),350)}
+function addMsg(text,who,action){
+  const c=$('chat');const m=document.createElement('div');m.className='msg '+who;m.innerHTML=text;
+  if(action){const b=document.createElement('button');b.className='act';b.textContent=action.label;
+    b.onclick=()=>{action.fn&&action.fn();toast(action.toast);b.textContent='Done ✓';b.disabled=true;b.style.opacity=.7};
+    m.appendChild(document.createElement('br'));m.appendChild(b);}
+  c.appendChild(m);c.scrollTop=c.scrollHeight;
+}
+function askChip(q){addMsg(q,'me');setTimeout(()=>answer(q),500)}
+function sendAsk(){const i=$('askinput');if(!i.value.trim())return;const q=i.value.trim();i.value='';addMsg(q,'me');setTimeout(()=>answer(q),500)}
+function answer(q){
+  const t=q.toLowerCase();
+  const safe=Math.round(safeToday()), free=Math.round(discretionary());
+  if(t.includes('phone')&&(t.includes('afford')||t.includes('buy')||t.includes('new'))){
+    const months=Math.ceil(2400/Math.max(100,free*0.25));
+    addMsg('Honest answer with your numbers: <b>not this month.</b> You have AED '+safe+' a day free. A AED 2,400 phone would eat '+Math.ceil(2400/Math.max(1,safe))+' days of that. But put AED '+fmt(Math.round(free*0.25))+' a month in a Phone envelope and you buy it <b>in cash in about '+months+' months</b>, no instalments, no interest.','bot',
+    {label:'Start a Phone envelope',toast:'Phone envelope created',fn:()=>{S.envelopes.push({icon:'📱',name:'New phone',amount:0,target:2400});renderSave();renderHome()}});
+  }else if(t.includes('low')||t.includes('why is my')){
+    addMsg('Your safe number is AED '+safe+' a day. Here is the maths: salary AED '+fmt(S.income)+', minus rent '+fmt(S.rent)+', bills '+fmt(billsTotal())+', family '+fmt(S.remit)+', savings '+fmt(S.saveMonthly)+'. That leaves <b>AED '+fmt(free)+' for the month</b>, and you have already spent AED '+fmt(spentSoFar())+' of it. The number is not low, <b>it is honest</b>. The leaks page shows what to free up.','bot');
+  }else if(t.includes('fee')||t.includes('charge')){
+    addMsg('Bank fees to check this week: a <b>minimum balance fee</b> of around AED 25 hits any month your balance dips under the bank\'s threshold. Fix it by parking the minimum or switching to a zero balance account. The "Banks, decoded" course has the 2 minute version.','bot',{label:'Open the lesson',toast:'Lesson opened in Learn',fn:()=>{closeAsk();go('learn')}});
+  }else if(t.includes('save faster')||t.includes('faster')||t.includes('leak')||t.includes('plug')){
+    const gym=activeSubs().find(s=>s.unused);
+    addMsg('Three moves, ranked by pain: <b>1)</b> '+(gym?('Stop the unused '+gym.name+', AED '+fmt(gym.amount)+'/month, zero pain.'):'Your subscriptions are already clean, well done.')+' <b>2)</b> Delivery on weekends only, keeps roughly AED 120/month. <b>3)</b> The 24 hour rule on anything over AED 100. Together that is real money, found, not earned.','bot',
+    gym?{label:'Stop '+gym.name+' now',toast:gym.name+' cancelled',fn:()=>cancelSub(gym.name)}:null);
+  }else if(t.includes('credit')){
+    addMsg('For you, right now: <b>wait.</b> Cards charge about 3% a month, roughly 40% a year, on anything you do not pay back in full. Build your emergency envelope first. Then a card you settle fully every month becomes a tool instead of a trap.','bot');
+  }else if(t.includes('jamiya')||t.includes("jam'iya")||t.includes('circle')||t.includes('committee')){
+    addMsg('A jam\'iya is the committee system: a group pays the same amount monthly and each month one member collects the whole pot. <b>You pay in exactly what you take out</b>, zero interest. What you gain is a lump sum on a known date, plus the social push that makes saving actually happen. Sanduq adds the receipts and reminders paper never had.','bot',{label:'Set one up',toast:'Opening circles',fn:()=>{closeAsk();go('save')}});
+  }else if(t.includes('rent')){
+    addMsg(S.rent>0?('Your rent of AED '+fmt(S.rent)+' is quarantined every payday before you see the money. It is due '+dueText(S.rentDay)+' and already covered. <b>You cannot accidentally spend it.</b>'):'You told me you pay no rent, which makes you the envy of this entire city. That frees up serious saving power.','bot');
+  }else if(t.includes('salary')||t.includes('paid')){
+    addMsg('Your salary of <b>AED '+fmt(S.income)+'</b> lands on day '+S.payday+'. The same hour, Sanduq sets aside AED '+fmt(S.rent)+' for rent, AED '+fmt(billsTotal())+' for bills'+(S.remit?', AED '+fmt(S.remit)+' for family':'')+' and AED '+fmt(S.saveMonthly)+' for savings. What you see as safe to spend is what is genuinely left.','bot');
+  }else if(t.includes('send')||t.includes('transfer')||t.includes('home')){
+    addMsg('Rule one of sending home: ignore the advertised fee, compare <b>what the family receives</b>. "Zero fee" services usually hide the cost in the exchange rate. Sanduq always shows the receive amount before you confirm. The "Send money home, smarter" course is 7 minutes total.','bot',{label:'Open transfers',toast:'Opening Pay',fn:()=>{closeAsk();go('pay')}});
+  }else{
+    addMsg('Quick read of your month: <b>AED '+safe+' a day free</b> after everything important is covered, AED '+fmt(envelopesTotal())+' resting in envelopes. Ask me about a bill, a fee, a goal, the jam\'iya, or whether you can afford something specific, and I will answer with your real numbers.','bot');
+  }
+}
+/* boot: render onboarding chips so demo of landing is instant */
+renderObChips();
+</script>
+</body>
+</html>
